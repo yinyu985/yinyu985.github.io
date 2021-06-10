@@ -176,7 +176,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-06-10 19:55:08 / Modified: 19:57:48" itemprop="dateCreated datePublished" datetime="2021-06-10T19:55:08+08:00">2021-06-10</time>
+              <time title="Created: 2021-06-10 19:55:08 / Modified: 20:09:03" itemprop="dateCreated datePublished" datetime="2021-06-10T19:55:08+08:00">2021-06-10</time>
             </span>
 
           
@@ -190,61 +190,54 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="使用Python虚拟环境"><a href="#使用Python虚拟环境" class="headerlink" title="使用Python虚拟环境"></a>使用Python虚拟环境</h1><p>python 的虚拟环境可以为一个 python 项目提供独立的解释环境、依赖包等资源，既能够很好的隔离不同项目使用不同 python 版本带来的冲突，而且还能方便项目的发布。</p>
-<h3 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h3><p><a target="_blank" rel="noopener" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>可用于创建独立的 Python 环境，它会创建一个包含项目所必须要的执行文件。</p>
-<h1 id="安装-virtualenv"><a href="#安装-virtualenv" class="headerlink" title="安装 virtualenv"></a><strong>安装 virtualenv</strong></h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pip install virtualenv    </span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+          <h1 id="使用Python虚拟环境"><a href="#使用Python虚拟环境" class="headerlink" title="使用Python虚拟环境"></a>使用Python虚拟环境</h1><p>python 的虚拟环境可以为一个 python 项目提供独立的解释环境、依赖包等资源，既能够很好的隔离不同项目使用不同 python 版本带来的冲突，而且还能方便项目的发布。<!--readmore--></p>
+<h2 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h2><p><a target="_blank" rel="noopener" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>可用于创建独立的 Python 环境，它会创建一个包含项目所必须要的执行文件。</p>
+<h3 id="安装-virtualenv"><a href="#安装-virtualenv" class="headerlink" title="安装 virtualenv"></a><strong>安装 virtualenv</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pip install virtualenv    </span><br></pre></td></tr></table></figure>
 
 <p><strong>配置 pip 安装第三方库的镜像源地址</strong></p>
 <p>我们都知道，国内连接国外的服务器都会比较慢，有时候设置下载经常出现超时的情况。这时可以尝试使用国内优秀的<a target="_blank" rel="noopener" href="https://pypi.douban.com/simple">豆瓣源</a>镜像来安装。</p>
 <p>使用豆瓣源安装 virtualenv</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install -i https://pypi.douban.com/simple virtualenv</span><br><span class="line">复制代码</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -i https://pypi.douban.com/simple virtualenv</span><br></pre></td></tr></table></figure>
 
-<h1 id="virtualenv使用方法"><a href="#virtualenv使用方法" class="headerlink" title="virtualenv使用方法"></a><strong>virtualenv使用方法</strong></h1><p>如下命令表示在当前目录下创建一个名叫 env 的目录（虚拟环境），该目录下包含了独立的 Python 运行程序,以及 pip副本用于安装其他的 packge</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">virtualenv env</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="virtualenv使用方法"><a href="#virtualenv使用方法" class="headerlink" title="virtualenv使用方法"></a><strong>virtualenv使用方法</strong></h3><p>如下命令表示在当前目录下创建一个名叫 env 的目录（虚拟环境），该目录下包含了独立的 Python 运行程序,以及 pip副本用于安装其他的 packge</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virtualenv env</span><br></pre></td></tr></table></figure>
 
 <p>当然在创建 env 的时候可以选择 Python 解释器，例如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">virtualenv -p /usr/local/bin/python3 venv</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virtualenv -p /usr/local/bin/python3 venv</span><br></pre></td></tr></table></figure>
 
 <p>默认情况下，虚拟环境会依赖系统环境中的 site packages，就是说系统中已经安装好的第三方 package 也会安装在虚拟环境中，如果不想依赖这些 package，那么可以加上参数 <code>--no-site-packages</code> 建立虚拟环境</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">virtualenv --no-site-packages [虚拟环境名称]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virtualenv --no-site-packages [虚拟环境名称]</span><br></pre></td></tr></table></figure>
 
-<p><strong>启动虚拟环境</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd ENV</span><br><span class="line">source ./bin/activate</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="启动虚拟环境"><a href="#启动虚拟环境" class="headerlink" title="启动虚拟环境"></a><strong>启动虚拟环境</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ENV</span><br><span class="line">source ./bin/activate</span><br></pre></td></tr></table></figure>
 
 <p>注意此时命令行会多一个<code>(ENV)</code>，ENV为虚拟环境名称，接下来所有模块都只会安装到这个虚拟的环境中去。</p>
-<p><strong>退出虚拟环境</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deactivate</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="退出虚拟环境"><a href="#退出虚拟环境" class="headerlink" title="退出虚拟环境"></a><strong>退出虚拟环境</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deactivate</span><br></pre></td></tr></table></figure>
 
 <p>如果想删除虚拟环境，那么直接运行<code>rm -rf venv/</code>命令即可。</p>
 <p><strong>在虚拟环境安装 Python packages</strong></p>
 <p>Virtualenv 附带有 pip 安装工具，因此需要安装的 packages 可以直接运行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install [套件名称]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install [套件名称]</span><br></pre></td></tr></table></figure>
 
 <h1 id="Virtualenvwrapper"><a href="#Virtualenvwrapper" class="headerlink" title="Virtualenvwrapper"></a>Virtualenvwrapper</h1><p>Virtualenvwrapper 是一个虚拟环境管理工具，它能够管理创建的虚拟环境的位置，并能够方便地查看虚拟环境的名称以及切换到指定的虚拟环境。</p>
-<p><strong>安装（确保virtualenv已经安装）</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install virtualenvwrapper</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="安装（确保virtualenv安装）"><a href="#安装（确保virtualenv安装）" class="headerlink" title="安装（确保virtualenv安装）"></a><strong>安装（确保virtualenv安装）</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install virtualenvwrapper</span><br></pre></td></tr></table></figure>
 
 <p>或者使用豆瓣源</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install -i https://pypi.douban.com/simple virtualenvwrapper-win</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -i https://pypi.douban.com/simple virtualenvwrapper-win</span><br></pre></td></tr></table></figure>
 
 <p>注：</p>
 <p>安装需要在非虚拟环境下进行</p>
-<p><strong>创建虚拟机</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkvirtualenv env</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="创建虚拟环境"><a href="#创建虚拟环境" class="headerlink" title="创建虚拟环境"></a><strong>创建虚拟环境</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkvirtualenv env</span><br></pre></td></tr></table></figure>
 
 <p>创建虚拟环境完成后，会自动切换到创建的虚拟环境中</p>
 <p>当然也可以指定虚拟机的 python 版本</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkvirtualenv env -p C:\python27\python.exe</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkvirtualenv env -p C:\python27\python.exe</span><br></pre></td></tr></table></figure>
 
-<p><strong>列出虚拟环境列表</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">workon 或者 lsvirtualenv</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="列出虚拟环境列表"><a href="#列出虚拟环境列表" class="headerlink" title="列出虚拟环境列表"></a><strong>列出虚拟环境列表</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">workon 或者 lsvirtualenv</span><br></pre></td></tr></table></figure>
 
-<p><strong>启动/切换虚拟环境</strong></p>
-<p>使用 workon [virtual-name] 即可切换到对应的虚拟环境</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">workon [虚拟环境名称]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="启动-切换虚拟环境"><a href="#启动-切换虚拟环境" class="headerlink" title="启动/切换虚拟环境"></a><strong>启动/切换虚拟环境</strong></h3><p>使用 workon [virtual-name] 即可切换到对应的虚拟环境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">workon [虚拟环境名称]</span><br></pre></td></tr></table></figure>
 
-<p><strong>删除虚拟环境</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rmvirtualenv [虚拟环境名称]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="删除虚拟环境"><a href="#删除虚拟环境" class="headerlink" title="删除虚拟环境"></a><strong>删除虚拟环境</strong></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rmvirtualenv [虚拟环境名称]</span><br></pre></td></tr></table></figure>
 
 <p><strong>离开虚拟环境，和 virutalenv 一样的命令</strong></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deactivate</span><br></pre></td></tr></table></figure>
