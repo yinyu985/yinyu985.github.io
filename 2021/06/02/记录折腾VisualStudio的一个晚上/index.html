@@ -1,8 +1,426 @@
-{%- extends "_layout.swig" -%}
-{%- import '_macro/post.swig' as post_template -%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-{%- block title -%} {{ page.title }} - {{ config.title }} {%- endblock -%}
+<link rel="stylesheet" href="/css/main.css">
 
-{%- block content -%}
-  {{ post_template.render(page) }}
-{%- endblock -%}
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="由于本学期新开的一门叫做可视化编程技术的课程，需要安装Visual Studio. 课上老师已经提醒过，直接用官网的安装工具是无法顺利下载的，需要手动修改网络适配器参数。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记录折腾Visual Studio的一个晚上">
+<meta property="og:url" content="http://example.com/2021/06/02/%E8%AE%B0%E5%BD%95%E6%8A%98%E8%85%BEVisualStudio%E7%9A%84%E4%B8%80%E4%B8%AA%E6%99%9A%E4%B8%8A/index.html">
+<meta property="og:site_name" content="ShareYu">
+<meta property="og:description" content="由于本学期新开的一门叫做可视化编程技术的课程，需要安装Visual Studio. 课上老师已经提醒过，直接用官网的安装工具是无法顺利下载的，需要手动修改网络适配器参数。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://i.loli.net/2021/06/03/1so8y4IdwRxqWNa.png">
+<meta property="article:published_time" content="2021-06-02T06:12:08.000Z">
+<meta property="article:modified_time" content="2021-06-03T12:51:21.321Z">
+<meta property="article:author" content="YinYu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/06/03/1so8y4IdwRxqWNa.png">
+
+<link rel="canonical" href="http://example.com/2021/06/02/%E8%AE%B0%E5%BD%95%E6%8A%98%E8%85%BEVisualStudio%E7%9A%84%E4%B8%80%E4%B8%AA%E6%99%9A%E4%B8%8A/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>记录折腾Visual Studio的一个晚上 | ShareYu</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ShareYu</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/02/%E8%AE%B0%E5%BD%95%E6%8A%98%E8%85%BEVisualStudio%E7%9A%84%E4%B8%80%E4%B8%AA%E6%99%9A%E4%B8%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="YinYu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ShareYu">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记录折腾Visual Studio的一个晚上
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-06-02 14:12:08" itemprop="dateCreated datePublished" datetime="2021-06-02T14:12:08+08:00">2021-06-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-06-03 20:51:21" itemprop="dateModified" datetime="2021-06-03T20:51:21+08:00">2021-06-03</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>由于本学期新开的一门叫做可视化编程技术的课程，需要安装Visual Studio. 课上老师已经提醒过，直接用官网的安装工具是无法顺利下载的，需要手动修改网络适配器参数。 <span id="more"></span></p>
+<h2 id="修改DNS"><a href="#修改DNS" class="headerlink" title="修改DNS"></a>修改DNS</h2><ul>
+<li>将DNS修改为8.8.8.8（谷歌）或者114.114.144.144（通用）,就可以开始正常的下载安装了。</li>
+</ul>
+<p>听起来也没有多复杂对吧，打开网络适配器，打开属性页面，使用固定DNS<br><img src="https://i.loli.net/2021/06/03/1so8y4IdwRxqWNa.png"><br>以上截图来自我的Mac mini（黑)上运行的PD虚拟机，安装过程的确很顺利，修改DNS服务器，打开安装程序，下载安装一气呵成，那么我是怎么折腾一个晚上的呢，请往下看。</p>
+<p>真实情况是我还有一台笔记本电脑，刚好那门课没有太被学校重视，以至于根本没有安排在学校机房，需要我们自行带笔记本电脑去上课，所以我开始尝试在我的笔记本上开始这个无聊的操作，此时我完全不知道这会浪费我一晚上的时间，并且我对这门课还并不感兴趣。</p>
+<h2 id="如法炮制"><a href="#如法炮制" class="headerlink" title="如法炮制"></a>如法炮制</h2><p>修改DNS，打开安装程序，进度条完全没有要动的意思，于是我一口气把两个DNS服务器都加上了，但是无济于事，学校的校园网需要先连接上WIFi，然后登陆宽带账号进行拨号，才可以连接上互联网，这个操作看起来是不是很睿智，但是人在屋檐下，也是没办法。问题来了，是修改连接的WIFi的DNS还是修改拨号连接的DNS呢，想不清楚都试了一下，修改WIFI连接的DNS没用，修改拨号连接的DNS，点击保存，弹出提示，更改将在下次拨号是生效，于是我断开重新连接拨号，好家伙，刚改的DNS，消失了。。。<br>我想是不是校园网不够稳定，于是我尝试手机打开热点，共享网络给电脑，依旧毫无反应。</p>
+<h2 id="万能百度"><a href="#万能百度" class="headerlink" title="万能百度"></a>万能百度</h2><p>果然遇到这种情况的不止我一个，根据CSDN网友的分享，修改本机的Hosts也是一个可行的办法，</p>
+<ul>
+<li>打开路径<code>C:\Windows\System32\drivers\etc\hosts</code>，</li>
+<li>打开站长工具DNS测试<a target="_blank" rel="noopener" href="https://tool.chinaz.com/dns/">https://tool.chinaz.com/dns/</a></li>
+<li>测试本地网络最适合download.visualstudio.microsoft.com的DNS，找到一个TTL最大的，复制</li>
+<li>用记事本打开在最下方加上 你复制的IP download.visualstudio.microsoft.com （注意中间空格）</li>
+<li>如果你在保存文件时显示权限不足，可以先把文件拖动到桌面，修改完之后再拖回。</li>
+<li>完成了修改这个操作，打开CMD 执行<code>ipconfig /flushdns</code>(用来刷新系统的DNS配置)</li>
+</ul>
+<h2 id="想得太好"><a href="#想得太好" class="headerlink" title="想得太好"></a>想得太好</h2><p>你以为修改了DNS，修改完Hosts就万事大吉了吗，并没有，进度条依旧是巍然不动。绞尽脑汁，我把问题的矛头指向了我的电脑硬件——网卡，毕竟虚拟机上面的操作是一气呵成的。于是开始折腾网卡，首先禁用网卡，然后重新启用。再测试，还是不行，卸载网卡驱动，插上提前备好的U盘，因为我经常折腾，所以网卡驱动是必须存在U盘随时备用的。</p>
+<h2 id="选择放弃"><a href="#选择放弃" class="headerlink" title="选择放弃"></a>选择放弃</h2><p>一段操作之后，他依旧是Visual Studio installer ，我依旧是憨憨。最终我还是放弃了。<br>折腾了一个晚上还是没有找出问题在哪！<br>无所谓了，爷不玩了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/06/05/I%20%E2%9D%A4%EF%B8%8F%20WUHAN/" rel="next" title="I ❤️ WUHAN">
+      I ❤️ WUHAN <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9DNS"><span class="nav-number">1.</span> <span class="nav-text">修改DNS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E6%B3%95%E7%82%AE%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">如法炮制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%87%E8%83%BD%E7%99%BE%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">万能百度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%83%B3%E5%BE%97%E5%A4%AA%E5%A5%BD"><span class="nav-number">4.</span> <span class="nav-text">想得太好</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E6%94%BE%E5%BC%83"><span class="nav-number">5.</span> <span class="nav-text">选择放弃</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">YinYu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://plus.google.com/yourname" title="Google → https:&#x2F;&#x2F;plus.google.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-google fa-fw"></i>Google</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/yourname" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/yourname" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://stackoverflow.com/yourname" title="StackOverflow → https:&#x2F;&#x2F;stackoverflow.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-stack-overflow fa-fw"></i>StackOverflow</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://youtube.com/yourname" title="YouTube → https:&#x2F;&#x2F;youtube.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-youtube fa-fw"></i>YouTube</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/yourname" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="skype:yourname?call|chat" title="Skype → skype:yourname?call|chat" rel="noopener" target="_blank"><i class="fab fa-skype fa-fw"></i>Skype</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">YinYu</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
