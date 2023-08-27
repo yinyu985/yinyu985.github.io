@@ -1,5 +1,5 @@
 ---
-title: 使用parted操作对超大硬盘进行分区
+title: 使用 parted 操作对超大硬盘进行分区
 slug: partitioning-a-large-hard-drive-using-the-parted-operation
 tags: [ Linux ]
 date: 2022-12-25T17:46:13+08:00

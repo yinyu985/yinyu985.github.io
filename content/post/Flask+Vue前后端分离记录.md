@@ -1,5 +1,5 @@
 ---
-title: Flask+Vue前后端分离记录
+title: Flask+Vue 前后端分离记录
 slug: flask+vue-front-and-rear-separation-records
 tags: [ Python, Flask ]
 date: 2023-07-12T20:13:14+08:00

@@ -1,5 +1,5 @@
 ---
-title: Lsync+rsync实现跨机器文件同步
+title: Lsync+rsync 实现跨机器文件同步
 slug: lsync+rsync-for-cross-machine-file-synchronization
 tags: [ Linux ]
 date: 2022-06-16T21:51:17+08:00

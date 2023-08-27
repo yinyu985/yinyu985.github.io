@@ -1,5 +1,5 @@
 ---
-title: Shell学习之getopt和getopts
+title: Shell 学习之 getopt 和 getopts
 slug: shell-learning:-getopt-and-getopt
 tags: [ Linux, Shell ]
 date: 2022-09-11T00:25:01+08:00

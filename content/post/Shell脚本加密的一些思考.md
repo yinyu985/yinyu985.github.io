@@ -1,5 +1,5 @@
 ---
-title: Shell脚本加密的一些思考
+title: Shell 脚本加密的一些思考
 slug: some-thoughts-on-shell-script-encryption
 tags: [ Linux, Shell ]
 date: 2022-11-02T22:16:54+08:00

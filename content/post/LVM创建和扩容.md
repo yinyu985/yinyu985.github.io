@@ -1,5 +1,5 @@
 ---
-title: LVM创建和扩容
+title: LVM 创建和扩容
 slug: lvm-creation-and-expansion
 tags: [ Linux ]
 date: 2022-08-14T22:14:36+08:00

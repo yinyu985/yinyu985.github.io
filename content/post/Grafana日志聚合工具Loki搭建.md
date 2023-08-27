@@ -1,5 +1,5 @@
 ---
-title: Grafana日志聚合工具Loki搭建
+title: Grafana 日志聚合工具 Loki 搭建
 slug: building-grafana-log-aggregation-tool-loki
 tags: [ Grafana, Loki ]
 date: 2022-09-13T21:58:21+08:00

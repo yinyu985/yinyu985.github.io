@@ -1,5 +1,5 @@
 ---
-title: Elasticsearch+Kibana+X-pack安装部署
+title: Elasticsearch+Kibana+X-pack 安装部署
 slug: elasticsearch+kibana+x-pack-installation-and-deployment
 tags: [ ELK ]
 date: 2022-03-12T10:38:27+08:00

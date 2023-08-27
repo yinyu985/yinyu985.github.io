@@ -1,5 +1,5 @@
 ---
-title: SSH免密配置及Ansible基础知识
+title: SSH 免密配置及 Ansible 基础知识
 slug: ssh-secret-free-configuration-and-ansible-basics
 tags: [ Linux, Ansible ]
 date: 2021-10-12T00:14:51+08:00

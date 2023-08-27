@@ -1,5 +1,5 @@
 ---
-title: MySQL五十道查询题目
+title: MySQL 五十道查询题目
 slug: fifty-mysql-query-questions
 tags: [ MySQL ]
 date: 2021-07-01T21:59:31+08:00

@@ -1,5 +1,5 @@
 ---
-title: OpenResty+Keepalived组建高可用集群
+title: OpenResty+Keepalived 组建高可用集群
 slug: openresty+keepalived-to-form-a-highly-available-cluster
 tags: [ Nginx, Linux ]
 date: 2022-09-15T22:41:57+08:00

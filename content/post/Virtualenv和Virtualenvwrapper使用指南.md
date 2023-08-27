@@ -1,5 +1,5 @@
 ---
-title: Virtualenv和Virtualenvwrapper使用指南
+title: Virtualenv 和 Virtualenvwrapper 使用指南
 slug: virtualenv-and-virtualenvwrapper-user's-guide
 tags: [ Python ]
 date: 2021-06-10T19:55:08+08:00

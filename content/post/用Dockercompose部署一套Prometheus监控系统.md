@@ -1,5 +1,5 @@
 ---
-title: 用Dockercompose部署一套Prometheus监控系统
+title: 用 Dockercompose 部署一套 Prometheus 监控系统
 slug: deploy-a-prometheus-monitoring-system-using-dockercompose
 tags: [ Prometheus, Docker ]
 date: 2021-12-20T22:01:15+08:00

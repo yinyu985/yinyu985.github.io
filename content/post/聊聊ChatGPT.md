@@ -1,5 +1,5 @@
 ---
-title: 聊聊ChatGPT
+title: 聊聊 ChatGPT
 slug: talking-about-chatgpt
 tags: [ Life ]
 date: 2023-04-13T21:25:04+08:00

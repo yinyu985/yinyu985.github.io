@@ -1,5 +1,5 @@
 ---
-title: K8s中Pod的调试技巧
+title: K8s 中 Pod 的调试技巧
 slug: debugging-techniques-for-pod-in-k8s
 tags: [ K8s, Docker ]
 date: 2023-06-13T20:53:12+08:00

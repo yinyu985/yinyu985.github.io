@@ -1,5 +1,5 @@
 ---
-title: Kuboard-spray图形化安装高可用的Kubernetes
+title: Kuboard-spray 图形化安装高可用的 Kubernetes
 slug: graphical-installation-of-highly-available-kubernetes-for-kuboard-spray
 tags: [ K8s, Tools, Docker ]
 date: 2023-07-07T18:02:02+08:00

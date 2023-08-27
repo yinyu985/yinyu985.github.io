@@ -1,5 +1,5 @@
 ---
-title: MySQL的MHA高可用安装踩坑记录
+title: MySQL 的 MHA 高可用安装踩坑记录
 slug: mysql's-mha-high-availability-installation-crater-record
 tags: [ Linux, MySQL ]
 date: 2022-10-18T21:44:03+08:00

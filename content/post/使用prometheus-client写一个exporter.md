@@ -1,5 +1,5 @@
 ---
-title: 使用prometheus_client写一个exporter
+title: 使用 prometheus_client 写一个 exporter
 slug: write-an-exporter-using-the-prometheus-client
 tags: [ Prometheus, Python ]
 date: 2023-02-07T21:37:03+08:00

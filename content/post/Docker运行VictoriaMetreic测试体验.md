@@ -1,5 +1,5 @@
 ---
-title: Docker运行VictoriaMetreic测试体验
+title: Docker 运行 VictoriaMetreic 测试体验
 slug: docker-run-victoriametreic-test-experience
 tags: [ Docker, Prometheus ]
 date: 2023-03-16T22:38:08+08:00

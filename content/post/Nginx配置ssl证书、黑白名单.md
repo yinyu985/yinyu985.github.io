@@ -1,5 +1,5 @@
 ---
-title: Nginx配置ssl证书、黑白名单
+title: Nginx 配置 ssl 证书、黑白名单
 slug: nginx-configuration-ssl-certificate,-black-and-white-list
 tags: [ Nginx, Linux ]
 date: 2022-07-12T22:57:28+08:00

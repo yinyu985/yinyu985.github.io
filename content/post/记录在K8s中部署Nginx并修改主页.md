@@ -1,5 +1,5 @@
 ---
-title: 记录在K8s中部署Nginx并修改主页
+title: 记录在 K8s 中部署 Nginx 并修改主页
 slug: record-the-deployment-of-nginx-in-the-middle-of-k8s-and-modify-the-homepage
 tags: [ Docker, Minikube, Nginx ]
 date: 2023-06-20T20:56:37+08:00

@@ -1,5 +1,5 @@
 ---
-title: Kubernetes和Flask的组合
+title: Kubernetes 和 Flask 的组合
 slug: combination-of-kubernetes-and-flask
 tags: [ K8s, Minikube, Python, Flask ]
 date: 2023-05-14T16:27:31+08:00

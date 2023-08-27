@@ -1,5 +1,5 @@
 ---
-title: 处理kafka故障全流程
+title: 处理 kafka 故障全流程
 slug: the-entire-process-of-handling-kafka-faults
 tags: [ ELK ]
 date: 2023-02-27T21:48:39+08:00

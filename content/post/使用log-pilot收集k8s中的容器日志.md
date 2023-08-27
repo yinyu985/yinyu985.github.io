@@ -1,5 +1,5 @@
 ---
-title: 使用log-pilot收集k8s中的容器日志
+title: 使用 Log-pilot 收集 k8s 中的容器日志
 slug: collect-container-logs-in-k8s-using-log-pilot
 tags: [ ELK, Docker, K8s ]
 date: 2022-12-11T10:41:51+08:00

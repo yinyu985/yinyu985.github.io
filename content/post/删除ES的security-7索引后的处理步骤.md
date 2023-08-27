@@ -1,5 +1,5 @@
 ---
-title: 删除ES的security-7索引后的处理步骤
+title: 删除 ES 的 security-7 索引后的处理步骤
 slug: processing-steps-after-deleting-the-security-7-index-of-es
 tags: [ ELK ]
 date: 2023-01-07T18:23:41+08:00

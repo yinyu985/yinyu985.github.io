@@ -1,5 +1,5 @@
 ---
-title: Elasticsearch跨集群迁移方案对比
+title: Elasticsearch 跨集群迁移方案对比
 slug: comparison-of-elasticsearch-cross-cluster-migration-schemes
 tags: [ Linux, ELK ]
 date: 2023-01-09T21:15:03+08:00

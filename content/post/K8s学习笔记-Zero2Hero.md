@@ -1,5 +1,5 @@
 ---
-title: K8s学习笔记_Zero2Hero
+title: K8s 学习笔记_Zero2Hero
 slug: k8s-learning-notes-zero2hero
 tags: [ K8s, Resource ]
 date: 2022-12-25T16:41:42+08:00

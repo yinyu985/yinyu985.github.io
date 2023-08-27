@@ -1,5 +1,5 @@
 ---
-title: minikube中使用Helm安装Prometheus监控大全套
+title: minikube 中使用 Helm 安装 Prometheus 监控大全套
 slug: using-helm-to-install-prometheus-monitoring-complete-set-in-minicube
 tags: [ Linux, Prometheus, Docker, Minikube ]
 date: 2023-03-15T20:46:44+08:00

@@ -1,5 +1,5 @@
 ---
-title: Logstash用日志时间代替时间戳
+title: Logstash 用日志时间代替时间戳
 slug: logstash-replaces-timestamp-with-log-time
 tags: [ ELK, Linux ]
 date: 2022-12-29T21:08:18+08:00
