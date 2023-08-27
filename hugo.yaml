@@ -3,7 +3,8 @@ languageCode: zh-cn
 title: Yinyu985's Blog
 label: 
   text: ""
-  icon: "https://github.com/yinyu985.png"
+  # icon: "https://github.com/yinyu985.png"
+  icon: "image/favicon.png"
   iconHeight: 28
 theme: papermod
 enableInlineShortcodes: true
