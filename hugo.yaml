@@ -4,7 +4,6 @@ title: Yinyu985's Blog
 label: 
   text: ""
   # icon: "https://github.com/yinyu985.png"
-  icon: "image/favicon.png"
   iconHeight: 28
 theme: papermod
 enableInlineShortcodes: true
@@ -21,10 +20,6 @@ permalinks:
   post: ":slug"
 menu:
   main:
-    # - identifier: home
-    #   name: Home
-    #   url: /
-    #   weight: 1
     - identifier: tags
       name: Tags
       url: /tags
@@ -112,9 +107,12 @@ params:
     google:
       SiteVerificationTag: ""
   assets:
-    favicon: "img/favicon.ico"
-    favicon16x16: "img/favicon-16x16-next.png"
-    favicon32x32: "img/favicon-32x32-next.png"
+    favicon: "img/favicon.png"
+    favicon16x16: "img/favicon.png"
+    favicon32x32: "img/favicon.png"
+    apple_touch_icon: "img/favicon.png"
+    safari_pinned_tab: "img/favicon.png"
+    disableFingerprinting: true
   cover:
     hidden: true
     hiddenInList: true
@@ -126,7 +124,7 @@ params:
     distance: 1000
     threshold: 0.4
     minMatchCharLength: 0
-    keys: ["title", "permalink", "summary", "content"]
+    keys: ["content"]
 
 taxonomies:
   tag: tags
