@@ -1,9 +1,9 @@
-baseURL: https://yinyu985.github.io/ # 绑定的域名
+baseURL: https://yinyu985.github.io/
 languageCode: zh-cn
 title: Yinyu985's Blog
 label: 
   text: ""
-  # icon: "https://github.com/yinyu985.png"
+  icon: "https://github.com/yinyu985.png"
   iconHeight: 28
 theme: papermod
 enableInlineShortcodes: true
