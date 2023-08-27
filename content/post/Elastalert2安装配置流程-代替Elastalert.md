@@ -1,7 +1,7 @@
 ---
 title: Elastalert2安装配置流程-代替Elastalert
 slug: elastalert-2-installation-configuration-process-replaces-elastalert
-tags: [ ELK, Alert ]
+tags: [ ELK ]
 date: 2022-10-13T00:06:17+08:00
 ---
 

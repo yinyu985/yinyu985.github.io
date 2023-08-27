@@ -1,7 +1,7 @@
 ---
 title: 分享一份值得分享的SRE面试题
 slug: share-an-sre-interview-question-worth-sharing
-tags: [ Tools, Linux, K8s, ELK, Resource ]
+tags: [ Resource ]
 date: 2023-07-11T13:12:54+08:00
 ---
 
