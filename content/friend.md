@@ -8,4 +8,4 @@ hidemeta: true
 
 {{<friend name= "张馆长" url="https://zhangguanzhang.github.io" logo="https://github.com/zhangguanzhang.png" word="信创先锋">}}
 
-
+{{<friend name= "雨水师傅" url="http://yushui.fun:816" logo="http://yushui.fun:816/upload/icons8-rain-96.png" word="全干工程师">}}
