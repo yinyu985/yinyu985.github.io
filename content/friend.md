@@ -13,3 +13,5 @@ hidemeta: true
 {{<friend name= "雨水师傅" url="http://yushui.fun:816" logo="https://github.com/yushui1995.png" word="全干工程师">}}
 
 
+
+{{<friend name= "Mardan M" url="https://www.mardan.wiki" logo="https://github.com/ka1i.png" word="DevOps Engineer">}}
