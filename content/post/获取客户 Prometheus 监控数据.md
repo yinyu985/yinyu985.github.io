@@ -5,13 +5,17 @@ tags: [ Python, Prometheus ]
 date: 2023-09-08T14:18:08+08:00
 ---
 
-Prometheus本身只提供了API查询的功能并没有导出数据功能，自带的Promtool也只提供验证规则文件和配置文件，调试等，无法实现监控数据的导出。
+## 业务背景
+
+为了方便二线同事排查问题时方便查看Grafana监控，现在的查看方式是，网络不通只能靠客户拍照，模糊，效率低，为了实现将用户的Prometheus数据可控的迁移到我们本地，Prometheus本身只提供了API查询的功能并没有导出数据功能，自带的Promtool也只提供验证规则文件和配置文件，调试等，无法实现监控数据的导出。
 
 ## 参考文章
 
-[使用外部工具分析普罗米修斯数据](https://valyala.medium.com/analyzing-prometheus-data-with-external-tools-5f3e5e147639)
+[Analyzing Prometheus data with external tools](https://valyala.medium.com/analyzing-prometheus-data-with-external-tools-5f3e5e147639)
 
-## **方案一：使用API导出指定时间段（故障发生前24小时的监控数据）**
+[Prometheus backfilling](https://medium.com/tlvince/prometheus-backfilling-a92573eb712c)
+
+## **方案一：使用API导出转换成CSV**
 
 ```python
 def query_prometheus_and_export_to_dataframe(prometheus_url, query, start_time, end_time, step_time):
@@ -54,7 +58,7 @@ data = query_prometheus_and_export_to_dataframe(prometheus_url, query, start_tim
 
 经过实验后并不是特别顺利，能够读取到CSV但没有成功绘制出图像，当看板变多需要查询的指标和查询的PromQL都会变多，并且部分查询语句中包含看板变量，CSV数据源无法实现看板变量。
 
-## **方案二：从Prometheus数据文件着手**
+## **方案二：拷贝Prometheus数据文件**
 
 Prometheus 按照两个小时为一个时间窗口，将两小时内产生的数据存储在一个块（Block）中。每个块都是一个单独的目录，里面含该时间窗口内的所有样本数据（chunks），元数据文件（meta.json）以及索引文件（index）。其中索引文件会将指标名称和标签索引到样板数据的时间序列中。此期间如果通过 API 删除时间序列，删除记录会保存在单独的逻辑文件 tombstone 当中。
 
