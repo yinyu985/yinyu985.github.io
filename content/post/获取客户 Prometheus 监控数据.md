@@ -145,6 +145,7 @@ Prometheus[2.24.0 / 2021-01-06](https://github.com/prometheus/prometheus/blob/ma
 ```python
 import datetime
 import requests
+import sys
 
 """
 定义需要查询的Prometheus链接
@@ -154,39 +155,39 @@ import requests
 """
 prometheus_url = 'http://localhost:9090'
 end_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-query_time = datetime.datetime.now() - datetime.timedelta(hours=30)
+query_time = datetime.datetime.now() - datetime.timedelta(hours=10)
 start_time = query_time.strftime("%Y-%m-%dT%H:%M:%SZ")
 print(f"开始查询从{start_time}到{end_time}的指标")
-
-series = requests.get('{}/api/v1/label/__name__/values'.format(prometheus_url))  # 查询全部的指标名称
-print(f'Prometheus中有{len(series.json()["data"])}条指标')
-queryQL_list = [queryQL for queryQL in series.json()['data'] if 'node' in queryQL] # 查询所有包含”node“的指标
-print(f"本次一共查询了{len(queryQL_list)}条指标")
-
-with open('openmetrics.txt', 'w') as f:
-    for queryQL in queryQL_list:
-        metric = requests.get(
-            f'{prometheus_url}/api/v1/query_range?query={queryQL}&start={start_time}&end={end_time}&step=10s')  # 定义步长为10s
-        if metric.json()['status'] != 'success':
-            print(f"查询失败，请重新计算查询点是否超过了11000")
-        else:
-            prometheus_data = metric.json()
-            for result in prometheus_data['data']['result']:
-                metric_name = result['metric']['__name__']
-                labels = []
-                for key, value in result['metric'].items():
-                    if key != '__name__':
-                        labels.append(f'{key}="{value}"')
-                labels = ','.join(labels)
-                openmetrics = []
-
-                for value in result['values']:
-                    # print(f'{metric_name}{{{labels}}} {value[1]} {value[0]}\n')
-                    openmetrics.append(f'{metric_name}{{{labels}}} {value[1]} {value[0]}\n')
-                openmetrics = ''.join(openmetrics)
-                f.write(openmetrics)
-    f.write('# EOF')  # 文档末尾添加结尾标志
-print("写入完成")
+series = requests.get('{}/api/v1/label/__name__/values'.format(prometheus_url))   # 查询全部的指标名称
+if series.status_code != 200:
+    print("查询失败,请手动访问{}/api/v1/label/__name__/values测试连通性".format(prometheus_url))
+    sys.exit(1)
+else:
+    print(f'Prometheus中有{len(series.json()["data"])}条指标')
+    queryQL_list = [queryQL for queryQL in series.json()['data'] if 'node' in queryQL]  # 查询所有包含”node“的指标
+    print(f"本次一共查询了{len(queryQL_list)}条指标")
+    with open('openmetrics.txt', 'w') as f:
+        for queryQL in queryQL_list:
+            metric = requests.get(
+                f'{prometheus_url}/api/v1/query_range?query={queryQL}&start={start_time}&end={end_time}&step=10s')  # 定义步长为10s
+            if metric.json()['status'] != 'success':
+                print(f"查询失败，请重新计算查询点是否超过了11000")
+            else:
+                prometheus_data = metric.json()
+                for result in prometheus_data['data']['result']:
+                    metric_name = result['metric']['__name__']
+                    labels = []
+                    for key, value in result['metric'].items():
+                        if key != '__name__':
+                            labels.append(f'{key}="{value}"')
+                    labels = ','.join(labels)
+                    openmetrics = []
+                    for value in result['values']:
+                        openmetrics.append(f'{metric_name}{{{labels}}} {value[1]} {value[0]}\n')
+                    openmetrics = ''.join(openmetrics)
+                    f.write(openmetrics)
+        f.write('# EOF\n')  # 文档末尾添加结尾标志
+    print("写入完成")
 ```
 
 ## 总结
