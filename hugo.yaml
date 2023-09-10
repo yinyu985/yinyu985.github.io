@@ -100,8 +100,6 @@ params:
       url: "mailto:yinyu985@gmail.com"
     - name: RSS
       url: "index.xml"
-  
-
 
   analytics:
     google:
