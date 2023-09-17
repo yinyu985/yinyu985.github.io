@@ -45,21 +45,6 @@ menu:
       url: /about
       weight: 91
 
-outputs:
-  home:
-    - HTML
-    - RSS
-    - JSON
-
-fuseOpts:
-  isCaseSensitive: false
-  shouldSort: true
-  location: 0
-  distance: 1000
-  threshold: 0.4
-  minMatchCharLength: 0
-  keys: [ "title", "permalink", "summary" ]
-
 params:
   profileMode:
     enabled: true
@@ -73,13 +58,13 @@ params:
       - name: Start
         url: post
   env: production
-  description: ""
+  description: "Yinyu985's Blog"
   defaultTheme: auto
   disableThemeToggle: false
   DateFormat: "2006-01-02"
   ShowShareButtons: false
   disableSpecialistPost: false
-  displayFullLangName: false
+  displayFullLangName: true
   ShowPostNavLinks: true
   ShowLastMod: false
   ShowBreadCrumbs: false
@@ -100,10 +85,6 @@ params:
       url: "mailto:yinyu985@gmail.com"
     - name: RSS
       url: "index.xml"
-
-  analytics:
-    google:
-      SiteVerificationTag: ""
   assets:
     favicon: "img/favicon.png"
     favicon16x16: "img/favicon.png"
@@ -123,7 +104,11 @@ params:
     threshold: 0.4
     minMatchCharLength: 0
     keys: ["content"]
-
+  outputs:
+    home:
+      - HTML
+      - RSS
+      - JSON
 taxonomies:
   tag: tags
 
