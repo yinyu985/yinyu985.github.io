@@ -64,7 +64,7 @@ params:
   profileMode:
     enabled: true
     title: Keep Learning
-    # subtitle: 子标题
+    subtitle: Devops/Cloudnative/Observability/Elasticstack
     imageUrl: https://github.com/yinyu985.png
     imageTitle: 
     imageWidth: 200
