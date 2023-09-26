@@ -44,8 +44,17 @@ menu:
       name: About
       url: /about
       weight: 91
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
 
 params:
+  editPost:
+    URL: "https://github.com/yinyu985/yinyu985.github.io/tree/main/content"
+    Text: "Edit"
+    appendFilePath: true
   profileMode:
     enabled: true
     title: Keep Learning
@@ -85,6 +94,7 @@ params:
       url: "mailto:yinyu985@gmail.com"
     - name: RSS
       url: "index.xml"
+
   assets:
     favicon: "img/favicon.png"
     favicon16x16: "img/favicon.png"
@@ -104,11 +114,6 @@ params:
     threshold: 0.4
     minMatchCharLength: 0
     keys: ["content"]
-  outputs:
-    home:
-      - HTML
-      - RSS
-      - JSON
 taxonomies:
   tag: tags
 
