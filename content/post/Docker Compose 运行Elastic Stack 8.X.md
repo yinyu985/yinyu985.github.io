@@ -2,7 +2,7 @@
 title: Docker Compose 运行 Elastic Stack 8.X
 slug: Docker-Compose-runs-Elastic-Stack-8.X
 tags: [ELK, Docker]
-date: '2023-09-28T19:20:25+08:00'
+date: '2023-09-28T12:20:25+08:00'
 ---
 
 ## 材料准备
