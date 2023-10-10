@@ -137,9 +137,9 @@ def get_user_input(prompt):
         raise Exception("不支持的Python版本")
 
 
-prometheus_url = "http://prometheus.cn-zhangjiakou-zsearch2.elasticsearch.aliyuncs.com"
+prometheus_url = "http://prometheus.cn-zhangjiakou-zsearch2.elasticsearch.******.com"
 username = "prometheus"
-password = "AliOS%1688"
+password = "**********"
 auth = None
 if username.strip() and password.strip():
     auth = (username, password)
