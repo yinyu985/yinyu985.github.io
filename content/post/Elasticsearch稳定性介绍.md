@@ -2,7 +2,7 @@
 title: Elasticsearch稳定性介绍
 slug: improving-elasticsearch-resiliency
 tags: [ELK]
-date: '2023-11-16T20:20:25+08:00'
+date: '2023-11-16T19:40:25+08:00'
 ---
 
 Elasticsearch 的团队致力于不断改进 Elasticsearch 和 Apache Lucene，以保护您的数据。与任何分布式系统一样，Elasticsearch 非常复杂，每个部分都可能遇到需要正确处理的边缘情况。我们将讨论在面对硬件和软件故障时，为改进 Elasticsearch 在健壮性和弹性方面所做的持续努力。
