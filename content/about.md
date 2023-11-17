@@ -2,6 +2,7 @@
 title: About
 slug: about
 hidemeta: true
+searchHidden: true
 ---
 
 # 关于博客
