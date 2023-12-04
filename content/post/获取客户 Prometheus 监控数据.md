@@ -3,6 +3,7 @@ title: 获取客户 Prometheus 监控数据
 slug: get-customer-Prometheus-monitoring-data
 tags: [ Python, Prometheus ]
 date: 2023-09-08T14:18:08+08:00
+
 ---
 
 ## 业务背景
@@ -110,141 +111,203 @@ Prometheus [2.24.0 / 2021-01-06](https://github.com/prometheus/prometheus/blob/m
 
 ## 总结
 
-以上代码顺利查询指标并导出,仅依赖request，如果有必要或许能够通过shell处理，能够进一步减少依赖，直接运行即可，导出200多条时间序列，前30小时的数据，最后文本文件的大小不到500M,在可以接受的范围，主要原因是Openmetric格式中太多的重复字段。
+以上代码顺利查询指标并导出,仅依赖requests，如果有必要或许能够通过shell处理，能够进一步减少依赖，直接运行即可，导出200多条时间序列，前30小时的数据，最后文本文件的大小不到500M,在可以接受的范围，主要原因是Openmetric格式中太多的重复字段。
 
 ```python
 # -*- coding: utf-8 -*-
 # !/usr/bin/python
+import subprocess
 import datetime
-import requests
+import shutil
+import json
 import sys
 import re
+import os
 
-requests.packages.urllib3.disable_warnings()
-"""
-脚本会通过Prometheus的api查询指定集群的关于ElasticSearch的指标,并将结果保存到本地文件中
-"""
+if sys.version_info.major == 2:
+    from urllib import quote
+else:
+    from urllib.parse import quote
 
 
 def get_user_input(prompt):
-    if sys.version_info.major == 2:
-        # Python 2
-        return raw_input(prompt)
-    elif sys.version_info.major == 3:
-        # Python 3
-        return input(prompt)
-    else:
-        raise Exception("不支持的Python版本")
+    return raw_input(prompt) if sys.version_info.major == 2 else input(prompt)
 
 
-prometheus_url = "http://prometheus.cn-zhangjiakou-zsearch2.elasticsearch.******.com"
-username = "prometheus"
-password = "**********"
-auth = None
-if username.strip() and password.strip():
-    auth = (username, password)
-elif username.strip() or password.strip():
-    print("请提供完整的用户名和密码或者都不提供以跳过认证。")
-    sys.exit(1)
-
-response = requests.get("{}/api/v1/label/cluster/values".format(prometheus_url), auth=auth, verify=False)
-if response.status_code == 200:
-    cluster_list = response.json()["data"]
-    if len(cluster_list) == 0:
-        raise ValueError("没有查询到集群")
-    print("监控的集群有:")
-    for cluster in cluster_list:
-        print(cluster)
-else:
-    raise ValueError(
-        "获取集群列表失败,请检查{}/api/v1/label/cluster/values,原因:{}".format(prometheus_url, response.reason))
-
-cluster = get_user_input("请输入要查询集群名称:")
-
-if cluster not in cluster_list:
-    print("请检查输入！")
-    sys.exit(1)
-
-# 访问/api/v1/status/config获取Prometheus的默认scrape_interval
-yaml_data = requests.get('{}/api/v1/status/config'.format(prometheus_url), auth=auth, verify=False).json()['data'][
-    'yaml']
-scrape_interval = re.search(r'scrape_interval:\s+(\d+)', yaml_data)
-default_step = int(scrape_interval.group(1))  # 查询Prometheus配置的值作为默认的 step,避免重复数据
-
-step = get_user_input("当前配置的采集间隔为{}秒,建议默认或更大,避免重复数据,请输入采集间隔秒数:".format(default_step))
-hours = get_user_input("将自动计算最大查询范围,建议指定所需较小的时间范围,请输入往前查的小时数:")
-
-
-def is_positive_integer(parameters):
-    """
-判断输入的参数是否为正整数
-"""
-
-    try:
-        num = int(parameters)
-        if num > 0:
-            return True
+def get_input_or_default(prompt, default_value):
+    while True:
+        user_input = get_user_input(prompt).strip()
+        if user_input.isdigit():
+            return int(user_input)
+        elif user_input == '':
+            return default_value
         else:
-            return False
-    except ValueError:
-        return False
+            print("请输入一个正整数或者直接回车使用默认值！")
 
 
-if step == "" and hours == "":
-    step = default_step
-    hours = int(11000 / (60 / int(step)) / 60)
-    print("将查询前{}小时的数据,采集间隔为{}秒".format(hours, step))
-elif step != "" and hours == "" and is_positive_integer(step):
-    step = int(step)
-    hours = int(11000 / (60 / int(step)) / 60)
-    print("将查询前{}小时的数据,采集间隔为{}秒".format(hours, step))
+def get_data_from_prometheus(url, auth, headers=None):
+    try:
+        try:
+            import requests
+            from requests.packages.urllib3.exceptions import InsecureRequestWarning
+            requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+            response = requests.get(url, auth=auth, verify=False, headers=headers)
+            response.raise_for_status()
+            print("request请求的链接是,{}".format(response.url))
+            data = response.json()
+        except ImportError:
+            cmd = ['curl', '-s', '-k', '-L', '--keepalive', '--compressed']
+            if auth is not None:
+                cmd += ['-u', '{}:{}'.format(auth[0], auth[1])]
+            if headers is not None:
+                for key, value in headers.items():
+                    cmd += ['-H', '{}: {}'.format(key, value)]
+            cmd.append(url)
+            print("curl请求的链接,{}".format(subprocess.list2cmdline(cmd)))
+            response = subprocess.check_output(cmd)
+            data = json.loads(response)
 
-elif step == "" and hours != "" and is_positive_integer(hours):
-    step = default_step
-    hours = int(hours)
-    print("将查询前{}小时的数据,采集间隔为{}秒".format(hours, step))
+        if 'data' in data and 'result' in data['data']:
+            result_list = data['data']['result']
+            if not result_list:
+                print("该指标为空，跳过")
+        return data
+    except Exception as e:
+        print("获取数据失败,请检查{},原因:{}".format(url, str(e)))
+        sys.exit(1)
 
-elif step != "" and hours != "" and is_positive_integer(step) and is_positive_integer(hours):
-    step = int(step)
-    hours = int(hours)
-    print("将查询前{}小时的数据,采集间隔为{}秒".format(hours, step))
-else:
-    print("请检查输入！")
+
+intro_message = """
+################################################################
+脚本将通过Prometheus内置的API接口导出ElasticSearch相关的监控数据
+文本压缩率很高，当导出文本文件超过100MB将自动压缩，将压缩包传出即可
+Prometheus硬性要求单次查询（3600/查询间隔）* 查询小时数 ≤ 11000
+################################################################
+"""
+print(intro_message)
+
+while True:
+    prometheus_url = get_user_input("请输入要查询的Prometheus地址:")
+    """判断开头是否是http或者https"""
+    if prometheus_url.startswith("http://") or prometheus_url.startswith("https://"):
+        break
+    else:
+        print("请输入正确的Prometheus地址，以http或者https开头")
+        continue
+username = get_user_input("请输入要查询的prometheus用户名/无认证可回车跳过:")
+password = get_user_input("请输入要查询的prometheus密码/无认证可回车跳过:")
+
+auth = (username, password) if username.strip() and password.strip() else None
+if auth is None and (username.strip() or password.strip()):
+    print("请提供完整的用户名和密码/无认证可回车跳过。")
     sys.exit(1)
 
-end_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-query_time = datetime.datetime.now() - datetime.timedelta(hours=hours)
-start_time = query_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+cluster_list_url = "{}/api/v1/label/cluster/values".format(prometheus_url)
+cluster_list = get_data_from_prometheus(cluster_list_url, auth)["data"]
 
-series = requests.get('{}/api/v1/label/__name__/values'.format(prometheus_url), auth=auth, verify=False)
-metric_list = [metric for metric in series.json()['data'] if
-               '{}'.format('elasticsearch') in metric]  # 将查询出所有带有elasticsearch的指标
-promQL_list = ['{}{{cluster="{}"}}'.format(metric, cluster) for metric in metric_list]
-print("本次一共查询了{}个指标".format(len(promQL_list)))
+if not cluster_list:
+    print("没有查询到集群")
+    sys.exit(1)
+
+print("监控的集群有:")
+for cluster in cluster_list:
+    print(cluster)
+
+while True:
+    cluster = get_user_input("请输入要查询集群名称:")
+    if cluster not in cluster_list:
+        print("请输入正确的集群名称")
+    else:
+        break
+
+config_url = '{}/api/v1/status/config'.format(prometheus_url)
+config = get_data_from_prometheus(config_url, auth)['data']['yaml']
+scrape_interval = re.search(r'scrape_interval:\s+(\d+)', config)
+default_step = int(scrape_interval.group(1))
+
+step = get_input_or_default(
+    "当前配置的采集间隔为{}秒,回车使用默认值或输入更大值,避免重复数据:".format(default_step), default_step)
+
+
+def get_time_input(prompt, step):
+    while True:
+        time_str = get_user_input(prompt)
+        if re.match(r'\d{8}-\d{8}', time_str):
+            start_date, end_date = time_str[:8], time_str[9:]
+            try:
+                start_time = datetime.datetime.strptime(start_date, "%Y%m%d").strftime("%Y-%m-%dT%H:%M:%SZ")
+                end_time = datetime.datetime.strptime(end_date, "%Y%m%d").strftime("%Y-%m-%dT%H:%M:%SZ")
+                hours = int((datetime.datetime.strptime(end_date, "%Y%m%d") -
+                             datetime.datetime.strptime(start_date, "%Y%m%d")).total_seconds() / 3600)
+                return start_time, end_time, hours
+            except ValueError:
+                print("请输入正确的日期格式，例如：20231111-20231112")
+        elif time_str.isdigit():
+            hours = int(time_str)
+            if hours * 60 * 60 / step > 11000:
+                print("查询数据量超过11000，请重新输入")
+            else:
+                end_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+                query_time = datetime.datetime.now() - datetime.timedelta(hours=hours)
+                start_time = query_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                return start_time, end_time, hours
+        else:
+            print("请输入正确的时间范围，例如：20231111-20231112 或者 输入小时数")
+
+
+start_time, end_time, hours = get_time_input("请输入查询时间范围（例如：20231111-20231112）或者输入小时数：", step)
+print("将查询从{}到{}的数据，采集间隔为{}秒".format(start_time, end_time, step))
+
+series_url = '{}/api/v1/label/__name__/values'.format(prometheus_url)
+series = get_data_from_prometheus(series_url, auth)
+metric_list = [metric for metric in series['data'] if
+               'elasticsearch' in metric and 'index' not in metric and 'indices' not in metric]
+promQL_list = ['{}{{pod=~"{}.*"}}'.format(metric, cluster) for metric in metric_list]
+
+if len(promQL_list) == 0:
+    print("没有找到ElasticSearch相关的指标")
+    sys.exit(1)
+print("本次查询共涉及{}个指标".format(len(promQL_list)))
 filename = 'openmetrics_{}_{}_{}.txt'.format(cluster, step, hours)
+query_start_time = datetime.datetime.now()
 with open(filename, 'a') as f:
     for promQL in promQL_list:
-        metrics = requests.get(
-            '{}/api/v1/query_range?query={}&start={}&end={}&step={}s'.format(
-                prometheus_url, promQL, start_time, end_time, step), auth=auth, verify=False)
-        if metrics.status_code != 200:
-            print("查询失败,状态码为{}".format(metrics.status_code))
-            sys.exit(1)
-        else:
-            prometheus_data = metrics.json()
-            for result in prometheus_data['data']['result']:
-                metric_name = result['metric']['__name__']
-                labels = []
-                for key, value in result['metric'].items():
-                    if key != '__name__':
-                        labels.append('{}="{}"'.format(key, value))
-                labels = ','.join(labels)
-                openmetrics = []
-                for value in result['values']:
-                    openmetrics.append('{}{{{}}} {} {}\n'.format(metric_name, labels, value[1], value[0]))
-                openmetrics = ''.join(openmetrics)
-                f.write(openmetrics)
+        promQL = quote(promQL)
+        metrics_url = '{}/api/v1/query_range?query={}&start={}&end={}&step={}s'.format(prometheus_url, promQL,
+                                                                                       start_time, end_time, step)
+        headers = {'Content-Type': 'application/json'}
+        prometheus_data = get_data_from_prometheus(metrics_url, auth, headers)
+        for result in prometheus_data['data']['result']:
+            metric_name = result['metric']['__name__']
+            labels = []
+            for key, value in result['metric'].items():
+                if key != '__name__':
+                    labels.append('{}="{}"'.format(key, value))
+            labels = ','.join(labels)
+            metrics_data = []
+            for value in result['values']:
+                metrics_data.append('{}{{{}}} {} {}\n'.format(metric_name, labels, value[1], value[0]))
+            f.write(''.join(metrics_data))
     f.write('# EOF\n')  # 文档末尾标志必须添加,promtool才能正常识别
+
+file_size = os.path.getsize(filename)  # 返回的是字节数
+
+if file_size > 100 * 1024 * 1024:
+    shutil.make_archive(filename, 'zip', '.', filename)
+query_end_time = datetime.datetime.now()
+elapsed_time = query_end_time - query_start_time
+elapsed_seconds = elapsed_time.total_seconds()
+hours, remainder = divmod(elapsed_seconds, 3600)
+minutes, seconds = divmod(remainder, 60)
+print("查询总耗时: {:02}:{:02}:{:02}".format(int(hours), int(minutes), int(seconds)))
 ```
 
 目前可行性最高的方案，本地测试和测试环境测试均已成功导出导入，由于Openmetric重复率较高，有较高的压缩比例，4GB的文本文件,可以压缩为40MB,导入到本地的 Prometheus ，重启 Prometheus （让其重载块文件）在Prometheus 和Grafana均可正常查询。
+
+## 后续更新
+
+新增了一种请求方式，即使没有requests，也可以通过curl来发送请求，没有任何的外部依赖（经过配置和测试curl没有明显落后）
+
+新增了错误重输的功能，当用户输入不满足要求时，会提示重新输入并不会脚本退出
+
+新增了指定时间范围查询，假如故障发生在上周，想往前查多少小时（原来接受输入的方式已经无法满足要求）
