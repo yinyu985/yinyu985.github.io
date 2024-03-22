@@ -61,7 +61,7 @@ date: 2023-07-11T13:12:54+08:00
 > elasticsearch分⽚副本是什么？你们配置的参数是多少？、集群规模？、qps峰值和平均峰值？
 
 ### 四、Docker
-> 
+>
 > dockerfile有哪些关键字？⽤途是什么？
 > 如何减⼩dockerfile⽣成镜像体积？
 > dockerfile中CMD与ENTRYPOINT区别是什么？

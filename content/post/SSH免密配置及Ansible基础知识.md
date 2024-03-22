@@ -147,7 +147,7 @@ state       # 指定服务状态
 enabled         #开机自启
 ```
 
-资料：https://halysl.github.io/2020/03/11/ansible%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%8F%8A%E5%BA%94%E7%94%A8/#%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97-playbook
+资料：<https://halysl.github.io/2020/03/11/ansible%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%8F%8A%E5%BA%94%E7%94%A8/#%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97-playbook>
 
 ## raw 模块
 

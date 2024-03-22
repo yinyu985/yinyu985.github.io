@@ -9,7 +9,7 @@ date: 2022-12-25T17:46:13+08:00
 
 `parted`是由GNU组织开发的一款功能强大的磁盘分区和分区大小调整工具，与fdisk不同，它支持调整分区的大小。作为一种设计用于Linux的工具，它没有构建成处理与fdisk关联的多种分区类型，但是，它可以处理最常见的分区格式，包括：ext2、ext3、fat16、fat32、NTFS、ReiserFS、JFS、XFS、UFS、HFS以及Linux交换分区。
 
-## 前情提要：
+## 前情提要
 
 > 1. 我们可以使用 fdisk命令对硬盘进行快速的分区，但对高于 2TB 的硬盘分区，此命令却无能为力。
 > 2. MBR分区表，仅支持最大四个主分区，且不支持2TB以上的磁盘，因此，大磁盘更适合使用parted进行GPT的分区。
@@ -420,4 +420,4 @@ tmpfs                   tmpfs     1.6G     0  1.6G    0% /run/user/0
 
 [parted：磁盘分区和分区大小调整工具](https://wangchujiang.com/linux-command/c/parted.html)
 
-[parted的详解及常用分区使用方法 ](https://www.cnblogs.com/lvzhenjiang/p/14391479.html)
+[parted的详解及常用分区使用方法](https://www.cnblogs.com/lvzhenjiang/p/14391479.html)

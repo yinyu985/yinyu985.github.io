@@ -5,7 +5,7 @@ tags: [ K8s, Minikube, Python, Flask ]
 date: 2023-05-14T16:27:31+08:00
 ---
 
-众所周知Minikube有自带的dashboard，输入命令`minikuke dashboard `打开链接就能看到，某日突发奇想，加入公司内部需要一个自定义的kubernetes监控平台，以满足一些自定义的需求呢？比如，我想看到最近新建的100个pod，或者我想看最近的k8s集群的events，使用flask来开发一个平台满足自定义，是一个不错的选择。<!--more-->
+众所周知Minikube有自带的dashboard，输入命令`minikuke dashboard`打开链接就能看到，某日突发奇想，加入公司内部需要一个自定义的kubernetes监控平台，以满足一些自定义的需求呢？比如，我想看到最近新建的100个pod，或者我想看最近的k8s集群的events，使用flask来开发一个平台满足自定义，是一个不错的选择。<!--more-->
 
 ```python
 from flask import Flask, render_template

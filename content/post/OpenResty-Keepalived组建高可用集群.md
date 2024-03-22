@@ -92,7 +92,7 @@ gmake && gmake install
 /home/openresty/nginx/sbin/nginx -V    #显示所有的编译模块
 ```
 
-###  创建可执行文件软链接
+### 创建可执行文件软链接
 
 ```bash
 ln -s /home/openresty/nginx/sbin/nginx /usr/bin/

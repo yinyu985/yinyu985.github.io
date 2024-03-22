@@ -26,7 +26,7 @@ filter {
             match => ["logtime","yyyy-MM-dd HH:mm:ss"]
             timezone => "Asia/Shanghai"
         }
-  			 mutate{remove_field => ["logtime" ]}
+      mutate{remove_field => ["logtime" ]}
 }
 output {
     elasticsearch {
@@ -67,7 +67,7 @@ filter {
             match => ["logtime","yyyy-MM-dd HH:mm:ss"]
             timezone => "Asia/Shanghai"
         }
-  			 mutate{remove_field => ["logtime" ]}
+      mutate{remove_field => ["logtime" ]}
 }
 output {
     elasticsearch {
@@ -83,7 +83,7 @@ output {
 
 附加，因为把时间戳替换成了过去的时间，所以在kibana查询最近的记录时会发现，咦，我日志呢？不用慌，它们回到了过去。
 
-## 参考文章：
+## 参考文章
 
 [logstash最佳实践--时间处理](https://doc.yonyoucloud.com/doc/logstash-best-practice-cn/filter/date.html)
 

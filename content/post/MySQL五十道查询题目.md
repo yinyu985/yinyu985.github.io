@@ -9,13 +9,13 @@ MySQL经典练习题及答案，常用SQL语句练习50题<!--more-->
 
 ## 表名和字段
 
-–1.学生表 
-Student(s_id,s_name,s_birth,s_sex) –学生编号,学生姓名, 出生年月,学生性别 
-–2.课程表 
-Course(c_id,c_name,t_id) – –课程编号, 课程名称, 教师编号 
-–3.教师表 
-Teacher(t_id,t_name) –教师编号,教师姓名 
-–4.成绩表 
+–1.学生表
+Student(s_id,s_name,s_birth,s_sex) –学生编号,学生姓名, 出生年月,学生性别
+–2.课程表
+Course(c_id,c_name,t_id) – –课程编号, 课程名称, 教师编号
+–3.教师表
+Teacher(t_id,t_name) –教师编号,教师姓名
+–4.成绩表
 Score(s_id,c_id,s_score) –学生编号,课程编号,分数
 
 ## 测试数据
@@ -89,7 +89,7 @@ insert into Score values('01' , '01' , 80);insert into Score values('01' , '02' 
 ## 练习题和答案
 
 ```
--- 1、查询"01"课程比"02"课程成绩高的学生的信息及课程分数select a.*,b.s_score as score01,c.s_score as score02 FROM	　　student a 	　　JOIN score b ON a.s_id=b.s_id and b.c_id='01'	　　LEFT JOIN score c on a.s_id=c.s_id and c.c_id='02' or c.c_id = NULL	WHERE b.s_score>c.s_score	;
+-- 1、查询"01"课程比"02"课程成绩高的学生的信息及课程分数select a.*,b.s_score as score01,c.s_score as score02 FROM 　　student a  　　JOIN score b ON a.s_id=b.s_id and b.c_id='01' 　　LEFT JOIN score c on a.s_id=c.s_id and c.c_id='02' or c.c_id = NULL WHERE b.s_score>c.s_score ;
 -- 2、查询"01"课程比"02"课程成绩低的学生的信息及课程分数
  
 select a.* ,b.s_score as 01_score,c.s_score as 02_score from 
@@ -416,4 +416,3 @@ from (select s_id,SUM(s_score) as sum_score from score GROUP BY s_id ORDER BY su
     select * from student where MONTH(DATE_FORMAT(NOW(),'%Y%m%d'))+1 =MONTH(s_birth)
 
 ```
-

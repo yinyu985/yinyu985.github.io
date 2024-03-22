@@ -62,18 +62,18 @@ cd /data/kafka_2.11-2.2.1/bin && ./kafka-topics.sh --describe --zookeeper localh
 通过上述命令查看各个topic的状态，发现有12的topic的Leader是-1，刚好就是一开始出现问题的那几个，这是不正常的。
 
 ```bash
-	Topic: Network_23_RS_Device	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: SDP_system	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: aduser_change	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: aduser_change1	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: koala	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: ldap	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: network_23_clearpass	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: network_35_Aruba-system	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: network_35_zdns	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: nginx_test	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: nuc	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
-	Topic: prometheus	Partition: 0	Leader: -1	Replicas: 1	Isr: 1
+ Topic: Network_23_RS_Device Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: SDP_system Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: aduser_change Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: aduser_change1 Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: koala Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: ldap Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: network_23_clearpass Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: network_35_Aruba-system Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: network_35_zdns Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: nginx_test Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: nuc Partition: 0 Leader: -1 Replicas: 1 Isr: 1
+ Topic: prometheus Partition: 0 Leader: -1 Replicas: 1 Isr: 1
 ```
 
 其实忙活一大下午，晚上另一个同事也过来看怎么解决，他的看法就是重启大法，我的观点是，现在已经出现了报错，不解决这些offline的partition,万一重启起不来不是直接懵逼，到时候只能不管三七二十一，把整个目录删掉了。
@@ -110,4 +110,3 @@ cd /data/kafka_2.11-2.2.1/bin && nohup ./kafka-server-start.sh ../config/server.
 ```
 
 重启看日志，没有发现异常，打开kafka-ui的看板，offline的数量全部回来了，URP数量为0。皆大欢喜，再去kibana看，日志开始进来了。
-

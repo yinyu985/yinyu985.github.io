@@ -46,19 +46,16 @@ docker-compose up
 
 见证奇迹，docker会根据当前路径的docker-compose.yaml的文件去构建镜像，启动容器。启动成功后会有这么几个页面
 
-- http://localhost:3000/  ###grafana---自带的看板
-- http://localhost:8428/  ###VictoriaMetrics---提供查询和存储的主要组件
-- http://localhost:8429/  ###vmagent---提供数据采集功能组件，能够直接读取Prometheus的配置文件
-- http://localhost:8880/  ###vmalert---提供告警，去VM查询，符合条件就产生告警，再发送到alertmanager
-- http://localhost:9093/  ###alertmanager---vmalert没有超越alertmanager，并只能依赖于alertmanager，提供告警路由，告警抑制等功能。
+- <http://localhost:3000/>  ###grafana---自带的看板
+- <http://localhost:8428/>  ###VictoriaMetrics---提供查询和存储的主要组件
+- <http://localhost:8429/>  ###vmagent---提供数据采集功能组件，能够直接读取Prometheus的配置文件
+- <http://localhost:8880/>  ###vmalert---提供告警，去VM查询，符合条件就产生告警，再发送到alertmanager
+- <http://localhost:9093/>  ###alertmanager---vmalert没有超越alertmanager，并只能依赖于alertmanager，提供告警路由，告警抑制等功能。
 
 如果你是Prometheus的用户，你可以前往 [https://play.victoriametrics.com/](https://play.victoriametrics.com/)这里体验一下官方提供的一个demo，相比于Prometheus这个前端页面做的确实很用心了，让我感触最深的一点就是，当你查一个指标不加任何筛选调条件（即job="XXXX"）可能会有很多的时间序列被查询到，他会有一个提示，因为性能原因只显示了多少条，这不是关键，你当然知道要加筛选条件，毕竟你也不想看到你不想看的序列出现在图表，当你想添加筛选条件时，你只需要点击你刚才查询的很多时间序列中的某个条件，即可复制到粘贴板，然后粘贴在上面的查询框，简直了，怎么会有这么人性化的设计。vmui对比Prometheus，简直完胜。
 虽然vmalert没能超越alertmanager，但是其实就算做了个类alertmanager的东西，不也是重复造轮子吗？毕竟alertmanager已经很强大了。
 我在自己的本机使用docker单独运行了一个node_exporter，然后把它添加到这套监控系统，整挺好，慢慢来吧，后续的体验记录也会继续更新在这里。
 
-
-
 贴一篇文章
 
 [Thanos 与 VictoriaMetrics 集群的比较](https://faun.pub/comparing-thanos-to-victoriametrics-cluster-b193bea1683)
-

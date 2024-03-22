@@ -71,7 +71,7 @@ server {
 
 ### 记录一个ssl配置生成器
 
-**SSL Configuration Generator**  https://ssl-config.mozilla.org/
+**SSL Configuration Generator**  <https://ssl-config.mozilla.org/>
 
 ### nginx的黑白名单
 
@@ -102,13 +102,13 @@ deny 123.45.6.0/24
 
 ### SSL 证书格式
 
-.csr 
+.csr
 Certificate Signing Request，即证书签名请求文件。证书申请者在生成私钥的同时也生成证书请求文件。把CSR文件提交给证书颁发机构后，证书颁发机构使用其根证书私钥签名就生成了证书公钥文件，也就是颁发给用户的证书。安装时可忽略该文件
 
-.key 
+.key
 私钥，与证书一一配对
 
- .crt   .cert   .cer 
+ .crt   .cert   .cer
 可以是二进制格式(der)，可以是文本格式(pem)。只包含证书，不保存私钥。一般Linux使用.crt后缀，.cer是windows后缀。
 
 此外，可以将多级证书导入同一个证书文件中，形成一个包含完整证书链的证书

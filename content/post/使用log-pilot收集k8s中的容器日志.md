@@ -7,10 +7,10 @@ date: 2022-12-11T10:41:51+08:00
 
 容器时代越来越多的传统应用将会逐渐容器化，而日志又是应用的一个关键环节，那么在应用容器化过程中，如何方便快捷高效地来自动发现和采集应用的日志，如何与日志存储系统协同来高效存储和搜索应用日志。本文将主要跟大家分享下如何通过[Log-Pilot](https://github.com/AliyunContainerService/log-pilot)来采集容器的标准输出日志和容器内文件日志。<!--more-->
 
-github地址： https://github.com/AliyunContainerService/log-pilot
-log-pilot官方介绍： https://yq.aliyun.com/articles/674327
-log-pilot官方搭建： https://yq.aliyun.com/articles/674361?spm=a2c4e.11153940.0.0.21ae21c3mTKwWS
-官方配置文件模版：https://github.com/AliyunContainerService/log-pilot/tree/master/examples<!--more-->
+github地址： <https://github.com/AliyunContainerService/log-pilot>
+log-pilot官方介绍： <https://yq.aliyun.com/articles/674327>
+log-pilot官方搭建： <https://yq.aliyun.com/articles/674361?spm=a2c4e.11153940.0.0.21ae21c3mTKwWS>
+官方配置文件模版：<https://github.com/AliyunContainerService/log-pilot/tree/master/examples><!--more-->
  在k8s中启动一个deloyment，配置文件log-pilot.yaml 如下：
 
 ```yaml

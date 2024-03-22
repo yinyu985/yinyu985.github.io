@@ -75,6 +75,6 @@ services:
 ```
 
 少年想学Prometheus吗？这里有几份秘籍。
-https://yunlzheng.gitbook.io/prometheus-book/
-https://prometheus.fuckcloudnative.io/
-https://www.kancloud.cn/huyipow/prometheus
+<https://yunlzheng.gitbook.io/prometheus-book/>
+<https://prometheus.fuckcloudnative.io/>
+<https://www.kancloud.cn/huyipow/prometheus>

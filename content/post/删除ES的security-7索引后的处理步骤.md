@@ -50,4 +50,3 @@ bin/elasticsearch-users useradd restore_user -p Xhs@12345678 -r superuser
 ```bash
 bin/elasticsearch-setup-passwords interactive
 ```
-

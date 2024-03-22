@@ -83,7 +83,7 @@ echo 显示详情     "$CONN_SHOW_DETAIL"
 
 `:u:p:n:v` 就是指定要解析的参数名称。
 
-### 规则说明：
+### 规则说明
 
 - 其中的字母表示需要解析的参数名称
 - 字母后面的冒号 `:` 表示该参数除了其本身，还会带上一个参数作为选项的值，传入的值通过 `$OPTARG` 变量获取
@@ -92,7 +92,7 @@ echo 显示详情     "$CONN_SHOW_DETAIL"
 
 使用 `getopts` 解析参数时，按照指定参数列表依次进行解析。如果本次解析符合指定参数规则，包括参数名称、是否需要传值等规则，则返回成功，进行下一次循环继续解析，否则退出循环。
 
-### 失败规则：
+### 失败规则
 
 - 遇到未定义的变量
 - 遇到了意外的值，如：在不需要传值的参数后面指定了参数，或者传入了比期待更多的值
@@ -128,7 +128,7 @@ echo 显示详情     "$CONN_SHOW_DETAIL"
 macOS 自带的 `getopt` 功能比较弱，不支持长选项，可以安装 GNU 版本 `gnu-getopt`：
 
 ```bash
-$ brew install gnu-getopt
+brew install gnu-getopt
 ```
 
 查看getopt的帮助信息
@@ -164,7 +164,7 @@ $ myscript -u username -p password -v -n 9999 192.168.1.2 -l3
 $ myscript --username username --password password --verbose --port 9999 192.168.1.2 --log-level=3
 ```
 
-### 参数说明：
+### 参数说明
 
 | 参数                | 说明                   |
 | ------------------- | ---------------------- |
@@ -237,9 +237,8 @@ echo '日志级别：  '  "$CONN_LOG_LEVEL"
 getopt -o 'u:p:n:vl::' -l 'username:,password:,port:,verbose,log-level::' -- "$@"
 ```
 
-### 参数规则：
+### 参数规则
 
 - `-o` 参数指定端参数格式，`-l` 参数指定对应的长参数
 - 冒号 `:` 规则与 `getopts` 的规则基本一致。区别在于后面带有两个冒号 `::` 的表示默认值参数
 - 对于`默认值选项`，短参数形式参数名与值之间不能有空格，长参数形式参数名与值需要用等号.`=` 连接
-

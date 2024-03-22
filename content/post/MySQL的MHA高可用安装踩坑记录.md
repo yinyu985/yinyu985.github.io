@@ -48,7 +48,7 @@ for循环发送到三台机器
 
 #### 安装MySQL
 
-CentOS 7将MySQL从默认的yum源中移除，用mariadb代替了,所以单独导入安装源 
+CentOS 7将MySQL从默认的yum源中移除，用mariadb代替了,所以单独导入安装源
 
 ```bash
 查看系统自带的Mariadb
@@ -547,9 +547,9 @@ sub usage {
 
 > 装完驱动发现又报cpan DBD::mysql Can't exec "mysql_config": 没有那个文件或目录
 >这个文件MySQL安装好了应该自带的，通过rpm安装的5.7.36，居然没有，佛了，只能卸载掉，重新换一种姿势安装。
-> 
+>
 >1. 首先通过rpm安装官方源，然后通过yum安装。（也就是本文记录的方式）
-> 2. 然后发现根本没有驱动的问题了，也没有报找不到mysql_config。
+>2. 然后发现根本没有驱动的问题了，也没有报找不到mysql_config。
 
 > 问题又来了，安装的MySQL，yum安装完能正常启动，修改my.cnf之后启动就失败了(报错，data_dir非空，我把整个路径都删除了，启动还是继续报)。
 >

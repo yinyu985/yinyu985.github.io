@@ -6,6 +6,7 @@ date: 2021-06-10T19:55:08+08:00
 ---
 
 python 的虚拟环境可以为一个 python 项目提供独立的解释环境、依赖包等资源，既能够很好的隔离不同项目使用不同 python 版本带来的冲突，而且还能方便项目的发布。<!--more-->
+
 ## virtualenv
 
 [virtualenv](http://pypi.python.org/pypi/virtualenv)可用于创建独立的 Python 环境，它会创建一个包含项目所必须要的执行文件。

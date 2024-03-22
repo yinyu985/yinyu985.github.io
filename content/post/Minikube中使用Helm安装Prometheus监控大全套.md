@@ -39,7 +39,7 @@ Minikube is a tool that allows you to run a Kubernetes cluster on your local mac
 brew install helm
 ```
 
-之后`helm version`	安装成功后会显示helm当前的版本，目前是V3，网上的其他教程在使用helm时，无脑复制命令可能会报错，因为helm新版本抛弃了一些命令参数。~~在此插一句题外话，云原生的东西，更新快的很，Prometheus、alertmanager、grafana，能容器化，就别二进制，真的很傻逼。等你某天发现了一个特性，然后想用这，但是发现你二进制安装的东西不允许你随随便便升级时，你会想起我说的话。~~
+之后`helm version` 安装成功后会显示helm当前的版本，目前是V3，网上的其他教程在使用helm时，无脑复制命令可能会报错，因为helm新版本抛弃了一些命令参数。~~在此插一句题外话，云原生的东西，更新快的很，Prometheus、alertmanager、grafana，能容器化，就别二进制，真的很傻逼。等你某天发现了一个特性，然后想用这，但是发现你二进制安装的东西不允许你随随便便升级时，你会想起我说的话。~~
 
 ```bash
 /Users/user.^_^.[10:59:03]
@@ -129,11 +129,10 @@ minikube service prometheus-grafana
 ❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
 ```
 
-minikube开启了一个tunnel将ClusterIP和端口，转发到了Mac本地的http://127.0.0.1:52850，如果你使用lens这样的工具，能够在service分栏里给配置一个端口转发（Port Forwarding）这样能够实现在Mac访问minikube中的ClusterIP的效果。
+minikube开启了一个tunnel将ClusterIP和端口，转发到了Mac本地的<http://127.0.0.1:52850，如果你使用lens这样的工具，能够在service分栏里给配置一个端口转发（Port> Forwarding）这样能够实现在Mac访问minikube中的ClusterIP的效果。
 
 另外使用kubectl也能够实现端口转发，我想lens应该也是将在点点点的转换成了kubectl这样的命令来实现端口转发的。
 
 ```bash
  kubectl port-forward deployment/prometheus-grafana 3000
 ```
-
