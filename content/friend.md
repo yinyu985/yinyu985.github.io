@@ -13,3 +13,5 @@ hidemeta: true
 {{<friend name= "Peach Blossom Spring" url="https://www.mardan.wiki" logo="https://github.com/ka1i.png" word="DevOps 什么的">}}
 
 {{<friend name= "poptartsodo" url="https://poptartsodo.github.io" logo="https://github.com/poptartsodo.png" word="Sparky Explorer">}}
+
+{{<friend name= "刘富贵" url="https://www.xiaoliu.xn--6qq986b3xl" logo="https://github.com/poptartsodo.png" word="监控">}}
