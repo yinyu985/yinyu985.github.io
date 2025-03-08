@@ -86,7 +86,9 @@
   <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
 </article>
 
-{{- end }}<!-- 隐藏 -->
+{{- end }} <!-- 隐藏 -->
+
+{{- end }} <!-- 闭合 range $paginator.Pages --> <!-- 新增此行以闭合 range 循环 -->
 
 {{- if gt $paginator.TotalPages 1 }}
 <footer class="page-footer">
