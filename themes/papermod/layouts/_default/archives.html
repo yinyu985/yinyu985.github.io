@@ -23,9 +23,14 @@
 {{- range $pages.GroupByPublishDate "2006" }}
 {{- if ne .Key "0001" }}
 <div class="archive-year">
-  <h2 class="archive-year-header">
-    {{- replace .Key "0001" "" }} 年<sup class="archive-count">&nbsp;&nbsp;{{ len .Pages }}</sup>
-  </h2>
+<h2 class="archive-year-header">
+  {{- replace .Key "0001" "" }}<sup class="archive-count">&nbsp;&nbsp;
+    {{- $visibleCount := 0 -}}
+    {{- range .Pages }}
+      {{- if not .Params.hidden }} {{- $visibleCount = add $visibleCount 1 -}} {{- end }}
+    {{- end -}}
+    {{- $visibleCount }}
+</sup></h2>
   {{- range .Pages.GroupByDate "January" }}
   <div class="archive-month">
     <h3 class="archive-month-header">
@@ -71,6 +76,8 @@
     </h3>
     <div class="archive-posts">
       {{- range .Pages }}
+      {{- if not .Params.hidden }} <!-- 隐藏 -->
+
       {{- if eq .Kind "page" }}
       <div class="archive-entry">
         <h3 class="archive-entry-title">
@@ -84,6 +91,8 @@
       </div>
       {{- end }}
       {{- end }}
+
+      {{- end }}  <!-- 隐藏 -->
     </div>
   </div>
   {{- end }}

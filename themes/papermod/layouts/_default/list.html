@@ -62,6 +62,7 @@
 {{- else if $term }}
 {{- $class = "post-entry tag-entry" }}
 {{- end }}
+{{ if not .Params.hidden }}<!-- 隐藏 -->
 
 <article class="{{ $class }}">
   {{- $isHidden := (site.Params.cover.hidden | default site.Params.cover.hiddenInList) }}
@@ -84,7 +85,8 @@
   {{- end }}
   <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
 </article>
-{{- end }}
+
+{{- end }}<!-- 隐藏 -->
 
 {{- if gt $paginator.TotalPages 1 }}
 <footer class="page-footer">
