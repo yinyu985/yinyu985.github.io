@@ -4,7 +4,6 @@ slug: Operator-multi-zone-master-election-optimization-and-lease-version-analysi
 tags: [ K8s,Git]
 date: 2025-03-19T18:20:25+08:00
 ---
-# Operator 多可用区选主优化与 Lease 版本分析
 ## 什么是 Lease？
 Lease 对象的核心作用是表示某个实体（通常是一个 Pod 或进程）对某项资源或角色的“持有权”，并且这种持有权是有时间限制的。通过定期续约（renew），持有者可以保持其控制权。如果持有者未能续约，租约到期后，其他实体可以接管。
 常见的应用场景包括：
