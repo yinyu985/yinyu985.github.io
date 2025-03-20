@@ -2,7 +2,7 @@
 title: Operator 多可用区选主优化与 Lease 版本分析
 slug: Operator-multi-zone-master-election-optimization-and-lease-version-analysis
 tags: [ K8s,Git]
-date: 2025-03-20T18:20:25+08:00
+date: 2025-03-19T18:20:25+08:00
 ---
 # Operator 多可用区选主优化与 Lease 版本分析
 ## 什么是 Lease？
