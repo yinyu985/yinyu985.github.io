@@ -1,0 +1,36 @@
+name: Cleanup GitHub Workflows
+
+on:
+  schedule:
+    # 每天运行，比如在午夜UTC时区执行
+    - cron: '0 0 * * *'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Delete old workflow runs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 获取一天前的日期
+          cutoff_date=$(date -u -d "1 day ago" +%Y-%m-%dT%H:%M:%SZ)
+
+          # 获取仓库的workflow运动列表
+          response=$(curl -X GET \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/runs?per_page=100)
+
+          # 查找需要删除的workflow运动
+          for run_id in $(echo "$response" | jq --arg date "$cutoff_date" '.workflow_runs[] | select(.created_at < $date) | .id'); do
+            # 执行删除API调用
+            curl -X DELETE \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/${{ github.repository }}/actions/runs/$run_id
+            echo "Deleted workflow run $run_id"
+          done
