@@ -1,7 +1,7 @@
 ---
 title: I_LOVE_WUHAN
 slug: i-love-wuhan
-tags: [ Life ]
+tags: [Life]
 date: 2021-06-05T19:26:39+08:00
 ---
 
