@@ -1,0 +1,129 @@
+baseURL: https://yinyu985.github.io/
+languageCode: zh-cn
+title: Yinyu985's Blog
+label:
+  text: ""
+  icon: "https://github.com/yinyu985.png"
+  iconHeight: 28
+theme: papermod
+enableInlineShortcodes: true
+enableEmoji: true
+enableRobotsTXT: true
+hasCJKLanguage: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+googleAnalytics: G-9W28F9LP0J
+pagination:
+  pagerSize: 10
+summaryLength: 800
+permalinks:
+  post: ":slug"
+menu:
+  main:
+    - identifier: tags
+      name: Tags
+      url: /tags
+      weight: 5
+    - identifier: archives
+      name: Archives
+      url: /archives/
+      weight: 20
+    - identifier: post
+      name: Post
+      url: /post/
+      weight: 2
+    - identifier: search
+      name: Search
+      url: /search
+      weight: 70
+    - identifier: friend
+      name: Friend
+      url: /friend
+      weight: 80
+    - identifier: about
+      name: About
+      url: /about
+      weight: 91
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+params:
+  editPost:
+    URL: "https://github.com/yinyu985/yinyu985.github.io/tree/main/content"
+    Text: "Edit"
+    appendFilePath: true
+  profileMode:
+    enabled: true
+    title: Keep Learning
+    subtitle: Devops/Cloudnative/Observability/Elasticstack
+    imageUrl: https://github.com/yinyu985.png
+    imageWidth: 200
+    imageHeight: 200
+    buttons:
+      - name: Start
+        url: post
+  env: production
+  description: "Yinyu985's Blog"
+  defaultTheme: auto
+  disableThemeToggle: false
+  DateFormat: "2006-01-02"
+  ShowShareButtons: false
+  disableSpecialistPost: false
+  displayFullLangName: true
+  ShowPostNavLinks: true
+  ShowLastMod: false
+  ShowBreadCrumbs: false
+  ShowReadingTime: true
+  ShowCodeCopyButtons: true
+  ShowWordCounts: true
+  hideFooter: true
+  VisitCount: true
+  ShowToc: true
+  TocOpen: true
+  extendCodeBackground: false
+  socialIcons:
+    - name: github
+      url: "https://github.com/yinyu985"
+    - name: twitter
+      url: "https://twitter.com/yinyu985"
+    - name: email
+      url: "mailto:yinyu985@gmail.com"
+    - name: RSS
+      url: "index.xml"
+
+  assets:
+    favicon: "img/favicon.png"
+    favicon16x16: "img/favicon.png"
+    favicon32x32: "img/favicon.png"
+    apple_touch_icon: "img/favicon.png"
+    safari_pinned_tab: "img/favicon.png"
+    disableFingerprinting: true
+  cover:
+    hidden: true
+    hiddenInList: true
+    hiddenInSingle: true
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    keys: ["content"]
+taxonomies:
+  tag: tags
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    codeFences: true
+    guessSyntax: true
+    noClasses: true
+    tabWidth: 4
+    style: monokai
