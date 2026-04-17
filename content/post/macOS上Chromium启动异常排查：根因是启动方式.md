@@ -1,5 +1,5 @@
 ---
-title: 一次 macOS 上 Chromium 系浏览器启动异常的排查：问题不在 Profile，而在启动方式
+title: macOS 上 Chromium 启动异常排查：根因是启动方式
 slug: chromium-browser-startup-issue-on-macos
 tags: [Mac, Browser]
 date: 2026-04-17T09:00:00+08:00
