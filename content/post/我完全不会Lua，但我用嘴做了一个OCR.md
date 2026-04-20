@@ -5,323 +5,329 @@ tags: [Life, AI, Mac]
 date: 2026-04-09T22:35:00+08:00
 ---
 
-最近折腾了一件我自己觉得很有时代感的事：我在几乎不会 Lua 的前提下，用 Hammerspoon 做了一个截图 OCR，而且整个过程我基本没有手写代码，主要就是靠嘴说，用语音输入，把需求讲给 AI Agent，然后让它一点一点实现。<!--more-->
+我前几天折腾了一个自己挺喜欢的小东西：在 macOS 上按一个快捷键，框选一块区域，直接把图里的字识别出来，然后塞进剪贴板。<!--more-->
 
-如果放在前几年，这种话说出来像吹牛。现在我只能说，这已经开始变成普通人也能碰到的现实了。
+功能不复杂，真正有意思的是另一件事：我几乎不会 Lua，这个东西还是做出来了。而且我全程基本没怎么敲代码，主要靠嘴说。准确点说，是我把需求、偏好、报错现象讲给 Codex，它去查、去试、去改，我负责盯方向和验收。
 
-这篇文章不贴具体代码，只记录这件事的原理、过程、踩坑、优化，以及它让我对未来技术工作方式的一些新判断。
+这篇不想再空讲“AI 改变生产方式”这种大话了，没劲。就讲三件事：
 
-## 这件事到底做了什么
+1. 这个 OCR 最后是怎么实现的
+2. 中间我为什么放弃了几条看起来更直觉的路
+3. 最后能直接用的 Lua 脚本长什么样
 
-目标其实非常朴素：
+## 我想要的，其实不是 OCR
 
-在 macOS 上按一个快捷键，框选一块屏幕区域，然后把图片里的文字识别出来，直接进剪贴板。
+我想要的是一个顺手的动作。
 
-最终做出来的效果也很简单：
+按下 `Ctrl + A`，框一下，文字就进剪贴板。没有额外窗口，没有一堆配置，没有“请把图片拖到这里”，也没有成功以后再弹个提示来打断我。
 
-1. 按下 `Ctrl + A`
-2. 用系统截图框选一块区域
-3. 调用 macOS 自带的 Vision
-4. 把 OCR 结果写入剪贴板
+这点很重要。因为很多工具的问题不在“不能用”，而在“每次用都要被它打扰一下”。
 
-就这么点功能。
+所以我一开始就把要求卡得比较死：
 
-但我觉得真正有意思的，不是这个功能本身，而是我实现它的方式。
+- 快捷键触发
+- 支持框选截图
+- 尽量只用 macOS 自带能力
+- 不装额外 OCR 软件
+- 最好只有一个 Lua 主入口文件
+- 成功时别弹窗，失败再说
 
-我从未系统写过 Lua，也没有认真写过 Hammerspoon。按正常路线，我应该先查文档、看 API、试 demo、报错、修报错，再一点一点拼起来。但这一次，我几乎是反过来的：我先把我想要什么讲清楚，再由 Codex 去查、去试、去写、去改。
+你看，真正难的不是“OCR 能不能做”，而是把链路收得够短。
 
-这件事里我更像产品经理、测试人员和验收人员，而不是传统意义上那个一行一行敲代码的人。
+## 一开始最容易想到的路，反而不是我想要的
 
-## 原理其实不复杂，复杂的是把链路做顺
+最直觉的方案当然是装个 `tesseract` 之类的东西，截图之后把图片丢过去识别。
 
-这个 OCR 的实现原理并不花哨，本质上就是三段：
+这条路能不能走？当然能。
 
-### 第一段：Hammerspoon 负责交互
+但我很快就不想走了。原因也很简单：我只是想做个平时自己顺手用的小 OCR，不想为了这点事再引一套额外依赖。你现在觉得装一次也就装一次，等你哪天把它分享给别人，或者自己换台机器，就知道这种“也不复杂”的依赖到底有多烦。
 
-Hammerspoon 做的事情主要是：
+所以目标很快就变成了：
 
-- 绑定快捷键
-- 调用系统截图
-- 管理临时文件
-- 把最终结果写入剪贴板
+`Hammerspoon 负责交互 + macOS Vision 负责识别`
 
-也就是说，Hammerspoon 是调度层，不是识别层。
+这条路的好处是干净。系统本来就有的能力，能用就别再往外搬。
 
-### 第二段：调用苹果自带的 Vision
+## 真正麻烦的地方，不是识别，而是桥接
 
-真正做 OCR 的不是 Lua，不是第三方模型，也不是我额外安装的 OCR 软件，而是 macOS 自带的 Vision 框架。
+如果只是讲原理，这个东西其实只有三段：
 
-这点很关键。
+1. Hammerspoon 绑定快捷键，调用系统截图
+2. 截图落到临时文件
+3. 调用 macOS 自带的 Vision 做文字识别，再把结果写进剪贴板
 
-因为我一开始就不太想为了一个简单 OCR，再给每台 Mac 安装一套额外依赖。像 `tesseract` 这种方案当然能做，而且代码表面上看可能更短，但它本质上是把复杂度转移到第三方依赖上。
+问题出在第三步。
 
-而我的目标后来越来越明确：
+我一开始以为，既然 Hammerspoon 里跑的是 Lua，那能不能直接在 Lua 里把 Vision 框架调起来？后来确认，不行，至少在现成这套环境里不行。Hammerspoon 的 Lua 很适合做调度，但不是那种你想调什么 Objective-C 框架就能直接调什么的运行时。
 
-- 尽量不装第三方 OCR
-- 尽量用系统能力
-- 尽量让分享成本低
-- 尽量让维护结构简单
+这时候如果硬拧，就会开始出现一种很烦的局面：Lua 一点，Shell 一点，AppleScript 一点，再夹点别的东西，最后能跑是能跑，但结构越来越丑。
 
-所以最终选择了 Vision。
+我中间最不满意的也就是这个。
 
-### 第三段：通过 AppleScriptObjC 桥接系统能力
+后来把思路拧回来以后，事情反而顺了：
 
-这里也是整个实现里最折腾的部分。
+- Lua 继续当主入口
+- Lua 负责截图、权限判断、临时文件、剪贴板
+- Lua 动态生成一段临时 AppleScript
+- `osascript` 执行这段脚本
+- AppleScriptObjC 去调 Vision
 
-因为 Hammerspoon 里的 Lua，并不能像某些脚本语言那样，直接把 Objective-C 框架当成普通模块来 import。所以“纯 Lua 直接调 Vision”这件事，在现成环境里并不成立。
+也就是说，表面上我还是只维护一个 `ocr.lua`，真正的 OCR 识别交给系统原生框架。这个结构我能接受，因为它至少是收敛的。
 
-但是，这不代表不能只保留一个 Lua 文件。
+## 这几个细节，不处理的话用起来会很烦
 
-最后的实现思路是：
+代码真正写出来以后，后面花时间的地方反而是一些小事。
 
-- 还是只保留一个 `ocr.lua`
-- 由 Lua 生成一段临时 AppleScript
-- 再由系统的 `osascript` 去执行这段脚本
-- 脚本内部通过 AppleScriptObjC 调用 Vision
+### 1. 屏幕录制权限得先拦
 
-也就是说，最终结果是“单文件 Lua 管理整个功能”，但 OCR 本身仍然是调用系统原生能力完成的。
+系统截图这一步如果没有权限，用户看到的体验会很差。与其等它报个莫名其妙的错，不如先检查一次 `screenRecordingState`，没权限就直接提示去系统设置里开。
 
-这已经足够符合我的要求了：
+### 2. 成功别弹窗
 
-- 外部没有 OCR 软件依赖
-- 代码结构上是单文件主入口
-- 别人抄过去也比较容易理解
+我一开始的版本，识别成功之后会弹一个提示。这个设计我后来很快就否了。
 
-## 这个过程里我们做了哪些优化
+原因很朴素：成功本来就是正常路径。正常路径还出来刷存在感，这种交互我自己都嫌烦。最后只保留了失败和取消时的提示，成功就安静地把文字写进剪贴板。
 
-说实话，这个功能真正花时间的，不是“写出来”，而是“收敛到一个让我满意的版本”。
+### 3. 识别结果直接进剪贴板
 
-### 第一轮优化：放弃额外 OCR 软件
+如果 OCR 完了还得再点一次复制，那这个工具就已经输了。快捷动作之所以有价值，就是因为它能少一次手。
 
-一开始最容易想到的方案其实是：
+### 4. 识别语言别乱开
 
-- 截图
-- 丢给第三方 OCR
-- 输出结果
+我最后只给了这几个识别语言：
 
-这个方案实现快，但工程上不够干净。尤其是如果只是普通截图取字，完全没必要专门再装一套 OCR 工具。
+```text
+zh-Hans
+zh-Hant
+en-US
+```
 
-所以很快就定成了：
+我平时用它，中文和英文够了。语言开太多，有时候反而容易给自己添乱。
 
-系统截图 + 系统 Vision + Hammerspoon 编排
+## 最终脚本
 
-### 第二轮优化：去掉多语言、多脚本的分裂感
-
-这个过程里我们其实走过一段弯路：中间一度出现了 Lua、JavaScript、Objective-C、Shell 脚本混在一起的情况。
-
-这些东西单看都没错，甚至还能跑，但问题在于：
-
-- 管理起来烦
-- 分享给别人不友好
-- 以后自己回头看也不够直观
-
-我后来越来越不满意这一点。因为“能跑”不是终点，“看起来像一个完整的东西”才是终点。
-
-所以后面做的最大优化之一，就是把结构收回到单文件思路，只让 `ocr.lua` 成为唯一主入口。
-
-### 第三轮优化：去掉没必要的弹窗
-
-最开始 OCR 成功以后还会弹一个提示框。
-
-这个事情看起来很小，但我自己很不喜欢。因为 OCR 成功本来就是正常路径，正常路径就不应该有强提示。写进剪贴板就够了。
-
-所以后面把成功弹窗去掉了，只保留失败和取消时的提示。
-
-这其实也是一个很典型的“人机协作开发”细节：AI 能把功能做出来，但很多交互层面的“别烦我”，还是得人自己拍板。
-
-### 第四轮优化：把“能运行”变成“能分享”
-
-这是我这次最在意的一点。
-
-如果一个脚本只有作者自己知道怎么运行，那它还不算真正完成。
-
-而一个真正让我满意的版本，应该具备这些特点：
-
-- 别人拿到后知道入口在哪
-- 不需要额外装 OCR 软件
-- 不需要先理解一堆中间构建流程
-- 失败时错误路径尽量清晰
-
-所以最后这个 OCR，我更看重的不是“它能识别文字”，而是“它像一个可以交付的东西”。
-
-## 这件事最让我震撼的，不是 OCR 本身
-
-真正让我震撼的，是这次开发方式。
-
-这整个过程里，我基本没有传统意义上的“写代码”。
-
-我做的事主要是：
-
-- 讲清楚我想要什么
-- 判断哪个方案更符合我的偏好
-- 看到报错以后反馈现象
-- 对交互体验提出要求
-- 决定最终结构要不要继续收敛
-
-Codex 做的事则是：
-
-- 去查现有环境
-- 去读 Hammerspoon 的能力边界
-- 去选实现路径
-- 去写代码
-- 去试错
-- 去修 bug
-- 去重构结构
-
-这不是“AI 代替我写了几个函数”那么简单，而是它已经开始承担一个相当完整的工程实现角色。
-
-而我作为人，反而越来越像是在做更高层的判断：
-
-- 依赖要不要加
-- 结构够不够简洁
-- 这个提示是不是太丑
-- 这个东西以后能不能分享给别人
-
-说直白一点，我全程只需要动嘴。
-
-如果这不是生产方式的变化，那什么才算是？
-
-## 我为什么要特别感谢 ChatGPT、Codex
-
-我以前也用过 ChatGPT 帮我查命令、解释报错、写点小脚本。
-
-但这次给我的感觉完全不一样。
-
-这一次不是“问一个问题，回一个答案”，而是“围绕一个真实目标，持续推进，持续修正，最后把一个能用的东西做出来”。
-
-尤其是 Codex 这种 Agent 形态，让我第一次很强烈地感受到：
-
-一个人不会某门语言，不再自动等于他做不成一件事。
-
-当然，我这里不是说能力不重要。恰恰相反，是你要比以前更清楚自己要什么、更知道哪里该坚持、哪里该收敛、哪里是工程上正确的方向。
-
-但我确实要感叹一句：
-
-ChatGPT、Codex 真的太猛了。
-
-以前是“帮你写代码”，现在已经更像是“陪你一起做工程”。
-
-## 再说说 Anthropic 最新那个模型
-
-截至 2026 年 4 月 9 日，Anthropic 在 2026 年 4 月 7 日公开了 Project Glasswing，并披露了一个没有公开发布的前沿模型：Claude Mythos Preview。
-
-这件事我看到之后，是真的有点头皮发麻。
-
-根据 Anthropic 官方披露，Claude Mythos Preview：
-
-- 找到了一个已经存在 27 年的 OpenBSD 漏洞
-- 找到了一个 16 年前埋下、而且经历了数百万次模糊测试都没被发现的 FFmpeg 漏洞
-- 还在各大操作系统、浏览器以及其他关键软件中发现了成千上万个高危漏洞
-
-更吓人的是，Anthropic 不是在讲一个“实验室里理论可行”的故事，而是在讲一个“已经实际做出来，并且已经开始和产业界一起修漏洞”的故事。
-
-我看到这件事最直接的感受是：
-
-AI 写页面、写脚本、写 CRUD，这些都还只是开胃菜。
-
-真正的大变化，是 AI 已经开始进入那些以前高度依赖资深工程师、资深安全研究员经验的领域了。
-
-这不是“会不会写个 demo”的问题，而是“它已经开始碰那些几十年都没人搞定的硬骨头了”。
-
-所以我一边感叹 ChatGPT 和 Codex 很牛，一边也必须感叹 Anthropic 最新这个模型真的非常夸张。
-
-这已经不是简单的“辅助编程工具升级”了，而是软件工程、安全研究、漏洞挖掘、基础设施防护整个生态都要重新适应。
-
-## 对未来的一些判断
-
-经历了这次折腾，再结合最近看到的这些前沿模型动态，我现在对未来有几个很强烈的判断。
-
-### 第一，程序员不是不重要了，而是不用再去干那些蠢活、脏活、累活了
-
-以前很多开发时间，其实不是花在真正有价值的设计上，而是花在：
-
-- 查文档
-- 搬运样板代码
-- 试错
-- 对付奇怪报错
-- 写很多重复而机械的胶水逻辑
-
-这些活不是没有价值，但确实很消耗人，而且常常配不上一个工程师最贵的那部分能力。
-
-未来越来越多这类活，会被 AI 吃掉。
-
-这不叫程序员没用了，这叫程序员终于可以少干点低价值重复劳动了。
-
-### 第二，人人都是程序员，不代表程序员不重要了
-
-“人人都能写点代码”这件事，我觉得会越来越接近现实。
-
-但这和“专业程序员不重要”完全不是一回事。
-
-会提需求、会让 AI 生成一些东西，只是门槛降低了；  
-而知道怎么做取舍、怎么做架构、怎么判断风险、怎么把一个系统做得稳定可维护，这些能力还是稀缺的。
-
-门槛降低，往往意味着上层能力会变得更重要。
-
-### 第三，测试开发和测试人员会越来越重要
-
-这点我现在非常相信。
-
-因为模型越强，生成速度越快，代码量就越容易爆炸。
-
-当“写出来”已经不再难，真正难的就变成：
-
-- 你怎么验证它是对的
-- 你怎么判断它会不会在边界条件炸掉
-- 你怎么设计测试去兜住 AI 生成的各种意外
-
-更何况，不是每个团队、每个人都能第一时间用上 Anthropic 这种最前沿、最贵、最敏感的模型去帮你找底层漏洞。
-
-那谁来补这个差距？
-
-很大程度上，还是测试体系、测试开发能力、质量工程能力。
-
-以后谁能把 AI 生成能力和高质量验证能力结合起来，谁就真的更强。
-
-### 第四，运维人员必须尽快补上 AI 时代的能力
-
-我觉得运维这条线的人，千万别觉得 AI 离自己远。
-
-恰恰相反，AI 离运维非常近。
-
-因为后面很现实的问题马上就会来：
-
-- AI 服务怎么部署
-- 模型怎么接入
-- 推理服务怎么维护
-- GPU 资源怎么管理
-- 权限和隔离怎么做
-- 日志、监控、告警怎么做
-- 成本怎么控制
-- 安全怎么兜底
-
-再往后一点，甚至包括训练、微调、数据管道、模型发布、模型回滚、推理稳定性这些事，都会越来越靠近传统运维、SRE、平台工程的职责边界。
-
-所以运维人员不是会被淘汰，而是要升级。
-
-谁能尽快补上 AI 部署、AI 维护、AI 基础设施这块能力，谁就更不容易被时代甩下车。
-
-## 最后的感想
-
-以前我会觉得，“我不会 Lua，所以这个东西我大概率不会去做。”
-
-现在我会觉得，“我不会 Lua，但只要我能把目标说清楚，把体验要求说明白，把 bug 反馈清楚，我照样可以把它做出来。”
-
-这不是说学习不重要了，而是学习和创造之间的路径，已经被 AI 大幅缩短了。
-
-我这次做的只是一个小小的 OCR。
-
-但这个小 OCR 在我看来，有一种很强的象征意义：
-
-它不是在证明我 Lua 学得多快，  
-而是在证明一个普通人，哪怕不掌握某门具体语言，也已经可以借助 AI 真正完成工程实现。
-
-这件事，真的很猛。
-
-而且我相信，这才刚刚开始。
-
-## 参考资料
-
-- [Anthropic：Project Glasswing](https://www.anthropic.com/glasswing)
-- [Anthropic Frontier Red Team：Assessing Claude Mythos Preview’s cybersecurity capabilities](https://red.anthropic.com/2026/mythos-preview/)
-- [OpenBSD 7.8 errata 025：TCP packets with invalid SACK options could crash the kernel](https://ftp.openbsd.org/pub/OpenBSD/patches/7.8/common/025_sack.patch.sig)
+脚本现在就在我本机的 `~/.hammerspoon/ocr.lua` 里，能直接用。核心逻辑就是下面这份。
+
+把它放到 `~/.hammerspoon/ocr.lua`：
+
+```lua
+local hs = hs
+local hotkey = hs.hotkey
+local task = hs.task
+local alert = hs.alert
+local pasteboard = hs.pasteboard
+local timer = hs.timer
+local screenRecordingState = hs.screenRecordingState
+
+local ocr = {}
+
+local screenshotCommand = "/usr/sbin/screencapture"
+local osascriptCommand = "/usr/bin/osascript"
+
+local function trim(text)
+  return (text or ""):gsub("^%s+", ""):gsub("%s+$", "")
+end
+
+local function stripProcessTrailingNewline(text)
+  return (text or ""):gsub("\r?\n$", "")
+end
+
+local function removeFile(path)
+  if path and #path > 0 then
+    os.remove(path)
+  end
+end
+
+local function tempPath(suffix)
+  return os.tmpname() .. suffix
+end
+
+local function copyOCRResult(text)
+  pasteboard.setContents(text)
+end
+
+local function appleScriptQuote(value)
+  return '"' .. tostring(value):gsub("\\", "\\\\"):gsub('"', '\\"') .. '"'
+end
+
+local function writeFile(path, content)
+  local file, err = io.open(path, "w")
+  if not file then
+    return nil, err
+  end
+
+  file:write(content)
+  file:close()
+  return true
+end
+
+local function buildOCRAppleScript(imagePath)
+  local quotedPath = appleScriptQuote(imagePath)
+  return table.concat({
+    'use framework "Foundation"',
+    'use framework "Vision"',
+    'use scripting additions',
+    "",
+    "set theFile to current application's |NSURL|'s fileURLWithPath:" .. quotedPath,
+    "set requestHandler to current application's VNImageRequestHandler's alloc()'s initWithURL:theFile options:(missing value)",
+    "set theRequest to current application's VNRecognizeTextRequest's alloc()'s init()",
+    "theRequest's setRecognitionLevel:(current application's VNRequestTextRecognitionLevelAccurate)",
+    'theRequest\'s setRecognitionLanguages:{"zh-Hans", "zh-Hant", "en-US"}',
+    "theRequest's setUsesLanguageCorrection:false",
+    "requestHandler's performRequests:(current application's NSArray's arrayWithObject:(theRequest)) |error|:(missing value)",
+    "set theResults to theRequest's results()",
+    'if theResults is missing value then return ""',
+    "set theArray to current application's NSMutableArray's new()",
+    "repeat with aResult in theResults",
+    "    set theCandidates to aResult's topCandidates:1",
+    "    if (theCandidates's |count|()) > 0 then",
+    "        (theArray's addObject:(((theCandidates's objectAtIndex:0)'s |string|())))",
+    "    end if",
+    "end repeat",
+    "return (theArray's componentsJoinedByString:linefeed) as text",
+  }, "\n")
+end
+
+local function runAppleScriptOCR(imagePath, callback)
+  local scriptPath = tempPath(".applescript")
+  local ok, err = writeFile(scriptPath, buildOCRAppleScript(imagePath))
+  if not ok then
+    callback(nil, "无法创建临时 AppleScript: " .. tostring(err))
+    return
+  end
+
+  local ocrTask = task.new(osascriptCommand, function(exitCode, stdout, stderr)
+    removeFile(scriptPath)
+
+    if exitCode ~= 0 then
+      local message = trim(stderr)
+      if message == "" then
+        message = "系统 OCR 执行失败"
+      end
+      callback(nil, message)
+      return
+    end
+
+    callback(stripProcessTrailingNewline(stdout), nil)
+  end, {scriptPath})
+
+  if not ocrTask then
+    removeFile(scriptPath)
+    callback(nil, "无法启动 osascript")
+    return
+  end
+
+  ocrTask:start()
+end
+
+function ocr.runOnImage(imagePath)
+  runAppleScriptOCR(imagePath, function(text, err)
+    removeFile(imagePath)
+
+    if not text then
+      alert.show(err, 3)
+      return
+    end
+
+    if text == "" then
+      alert.show("没有识别到文本", 2)
+      return
+    end
+
+    copyOCRResult(text)
+  end)
+end
+
+function ocr.captureSelectionAndRecognize()
+  if not screenRecordingState(false) then
+    screenRecordingState(true)
+    alert.show("请先给 Hammerspoon 开启屏幕录制权限，然后重新尝试 OCR", 3)
+    return
+  end
+
+  local imagePath = tempPath(".png")
+  task.new(screenshotCommand, function(exitCode, _, stderr)
+    if exitCode ~= 0 then
+      removeFile(imagePath)
+
+      local message = trim(stderr)
+      if not screenRecordingState(false) then
+        message = "缺少屏幕录制权限，请在系统设置里允许 Hammerspoon"
+      elseif message == "" then
+        message = "截图已取消"
+      end
+
+      alert.show(message, 1.8)
+      return
+    end
+
+    timer.doAfter(0.05, function()
+      ocr.runOnImage(imagePath)
+    end)
+  end, {"-i", "-x", imagePath}):start()
+end
+
+local modifiers = {"ctrl"}
+local triggerKey = "a"
+
+if hotkey.assignable(modifiers, triggerKey) then
+  hotkey.bind(modifiers, triggerKey, nil, function()
+    ocr.captureSelectionAndRecognize()
+  end)
+else
+  alert.show("Ctrl+" .. triggerKey .. " 已被系统占用，OCR 热键未绑定")
+end
+
+return ocr
+```
+
+然后在 `~/.hammerspoon/init.lua` 里加一句：
+
+```lua
+require("ocr")
+```
+
+重载 Hammerspoon 之后，按 `Ctrl + A` 就能用。
+
+## 这份脚本到底干了什么
+
+如果把上面一大段压成几句人话，其实就是：
+
+1. 按 `Ctrl + A`
+2. 调 `screencapture -i -x` 让你框选
+3. 把截图存成临时 PNG
+4. 现场生成一段 AppleScript
+5. AppleScript 通过 Vision 识别文字
+6. 把返回结果塞进剪贴板
+7. 删掉临时图片和临时脚本
+
+所以这东西虽然叫 `ocr.lua`，本质上其实是个调度器。真正干识别的是 Vision，真正把 Vision 调起来的是 AppleScriptObjC。
+
+## 这次最让我有感觉的，不是 Lua
+
+说到底，我这次不是学会了 Lua。
+
+我只是第一次特别明确地感受到，很多过去“得先学会 X，才能开始做 Y”的事情，现在已经没那么绝对了。
+
+当然，前提不是你可以什么都不懂。恰恰相反，你得更清楚自己到底要什么。
+
+比如这次真正由我拍板的，不是某个 API 怎么写，而是这些事：
+
+- 我不要第三方 OCR 依赖
+- 我不要成功弹窗
+- 我希望它最后还是一个单文件入口
+- 哪条路虽然能跑，但结构太脏，我不要
+
+这些判断以前也重要，只是以前你还得自己把所有实现细节一并扛下来。现在实现这部分，可以明显往 AI 那边分了。
+
+这就是我为什么会说，这玩意儿是“用嘴做出来的”。
+
+不是说我一点没参与。恰恰相反，我参与得很深，只是参与的位置变了。
+
+## 最后
+
+这篇原本只写了思路，没把脚本贴出来，确实差一口气。技术文讲到“这里其实能做”，结果不放代码，读者看完多半只会想一句：行吧，那你倒是把东西给我。
+
+现在补上了，文章才算完整。
+
+而且说实话，这个 OCR 本身没多大。真正让我上头的是另一件事：我不会 Lua，但我还是把它做出来了。这个感觉挺新鲜，也挺实在。
