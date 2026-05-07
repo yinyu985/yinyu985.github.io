@@ -124,51 +124,27 @@ local ocr = {}
 local screenshotCommand = "/usr/sbin/screencapture"
 local osascriptCommand = "/usr/bin/osascript"
 
-local function trim(text)
-  return (text or ""):gsub("^%s+", ""):gsub("%s+$", "")
+-- Cleanup stale temp files on load
+for f in io.popen('ls /tmp/ocr_* 2>/dev/null'):lines() do
+  os.remove(f)
 end
 
-local function stripProcessTrailingNewline(text)
-  return (text or ""):gsub("\r?\n$", "")
+local function trim(s) return (s or ""):gsub("^%s+", ""):gsub("%s+$", "") end
+
+local function tmp(suffix)
+  return "/tmp/ocr_" .. tostring(os.time()) .. "_" .. tostring(math.random(100000)) .. (suffix or "")
 end
 
-local function removeFile(path)
-  if path and #path > 0 then
-    os.remove(path)
-  end
-end
+local function q(s) return '"' .. tostring(s):gsub("\\", "\\\\"):gsub('"', '\\"') .. '"' end
 
-local function tempPath(suffix)
-  return os.tmpname() .. suffix
-end
-
-local function copyOCRResult(text)
-  pasteboard.setContents(text)
-end
-
-local function appleScriptQuote(value)
-  return '"' .. tostring(value):gsub("\\", "\\\\"):gsub('"', '\\"') .. '"'
-end
-
-local function writeFile(path, content)
-  local file, err = io.open(path, "w")
-  if not file then
-    return nil, err
-  end
-
-  file:write(content)
-  file:close()
-  return true
-end
-
-local function buildOCRAppleScript(imagePath)
-  local quotedPath = appleScriptQuote(imagePath)
+local function buildAppleScript(imagePath)
+  local qp = q(imagePath)
   return table.concat({
     'use framework "Foundation"',
     'use framework "Vision"',
     'use scripting additions',
     "",
-    "set theFile to current application's |NSURL|'s fileURLWithPath:" .. quotedPath,
+    "set theFile to current application's |NSURL|'s fileURLWithPath:" .. qp,
     "set requestHandler to current application's VNImageRequestHandler's alloc()'s initWithURL:theFile options:(missing value)",
     "set theRequest to current application's VNRecognizeTextRequest's alloc()'s init()",
     "theRequest's setRecognitionLevel:(current application's VNRequestTextRecognitionLevelAccurate)",
@@ -188,41 +164,43 @@ local function buildOCRAppleScript(imagePath)
   }, "\n")
 end
 
-local function runAppleScriptOCR(imagePath, callback)
-  local scriptPath = tempPath(".applescript")
-  local ok, err = writeFile(scriptPath, buildOCRAppleScript(imagePath))
-  if not ok then
-    callback(nil, "无法创建临时 AppleScript: " .. tostring(err))
+local function runOCR(imagePath, callback)
+  local scriptPath = tmp(".applescript")
+  local f, err = io.open(scriptPath, "w")
+  if not f then
+    os.remove(scriptPath)
+    os.remove(imagePath)
+    callback(nil, "OCR failed")
     return
   end
+  f:write(buildAppleScript(imagePath))
+  f:close()
 
-  local ocrTask = task.new(osascriptCommand, function(exitCode, stdout, stderr)
-    removeFile(scriptPath)
+  local t = task.new(osascriptCommand, function(exitCode, stdout, stderr)
+    os.remove(scriptPath)
 
     if exitCode ~= 0 then
-      local message = trim(stderr)
-      if message == "" then
-        message = "系统 OCR 执行失败"
-      end
-      callback(nil, message)
+      os.remove(imagePath)
+      callback(nil, "OCR failed")
       return
     end
 
-    callback(stripProcessTrailingNewline(stdout), nil)
+    callback(stdout:gsub("\r?\n$", ""), nil)
   end, {scriptPath})
 
-  if not ocrTask then
-    removeFile(scriptPath)
-    callback(nil, "无法启动 osascript")
+  if not t then
+    os.remove(scriptPath)
+    os.remove(imagePath)
+    callback(nil, "OCR failed")
     return
   end
 
-  ocrTask:start()
+  t:start()
 end
 
 function ocr.runOnImage(imagePath)
-  runAppleScriptOCR(imagePath, function(text, err)
-    removeFile(imagePath)
+  runOCR(imagePath, function(text, err)
+    os.remove(imagePath)
 
     if not text then
       alert.show(err, 3)
@@ -230,52 +208,52 @@ function ocr.runOnImage(imagePath)
     end
 
     if text == "" then
-      alert.show("没有识别到文本", 2)
+      alert.show("No text found", 2)
       return
     end
 
-    copyOCRResult(text)
+    pasteboard.setContents(text)
   end)
 end
 
 function ocr.captureSelectionAndRecognize()
   if not screenRecordingState(false) then
     screenRecordingState(true)
-    alert.show("请先给 Hammerspoon 开启屏幕录制权限，然后重新尝试 OCR", 3)
+    alert.show("Screen capture denied", 3)
     return
   end
 
-  local imagePath = tempPath(".png")
-  task.new(screenshotCommand, function(exitCode, _, stderr)
+  local imagePath = tmp(".png")
+  local t = task.new(screenshotCommand, function(exitCode, _, stderr)
     if exitCode ~= 0 then
-      removeFile(imagePath)
-
-      local message = trim(stderr)
-      if not screenRecordingState(false) then
-        message = "缺少屏幕录制权限，请在系统设置里允许 Hammerspoon"
-      elseif message == "" then
-        message = "截图已取消"
-      end
-
-      alert.show(message, 1.8)
+      os.remove(imagePath)
+      alert.show("Screen capture failed", 1.8)
       return
     end
 
     timer.doAfter(0.05, function()
       ocr.runOnImage(imagePath)
     end)
-  end, {"-i", "-x", imagePath}):start()
+  end, {"-i", "-x", imagePath})
+
+  if not t then
+    os.remove(imagePath)
+    alert.show("Screen capture failed", 2)
+    return
+  end
+
+  t:start()
 end
 
 local modifiers = {"ctrl"}
-local triggerKey = "a"
+local triggerKey = "d"
 
 if hotkey.assignable(modifiers, triggerKey) then
   hotkey.bind(modifiers, triggerKey, nil, function()
     ocr.captureSelectionAndRecognize()
   end)
 else
-  alert.show("Ctrl+" .. triggerKey .. " 已被系统占用，OCR 热键未绑定")
+  alert.show("Ctrl+" .. triggerKey .. " is reserved", 3)
 end
 
 return ocr
