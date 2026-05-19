@@ -9,27 +9,29 @@ date: 2026-04-09T22:35:00+08:00
 
 功能不复杂，真正有意思的是另一件事：我几乎不会 Lua，这个东西还是做出来了。而且我全程基本没怎么敲代码，主要靠嘴说。准确点说，是我把需求、偏好、报错现象讲给 Codex，它去查、去试、去改，我负责盯方向和验收。
 
-这篇不想再空讲“AI 改变生产方式”这种大话了，没劲。就讲三件事：
+这篇不想再空讲“AI 改变生产方式”这种大话了，没劲。就讲四件事：
 
 1. 这个 OCR 最后是怎么实现的
 2. 中间我为什么放弃了几条看起来更直觉的路
-3. 最后能直接用的 Lua 脚本长什么样
+3. 后来我为什么又加了一个菜单栏入口
+4. 最后能直接用的 Lua 脚本长什么样
 
 ## 我想要的，其实不是 OCR
 
 我想要的是一个顺手的动作。
 
-按下 `Ctrl + A`，框一下，文字就进剪贴板。没有额外窗口，没有一堆配置，没有“请把图片拖到这里”，也没有成功以后再弹个提示来打断我。
+按下 `Ctrl + D`，或者点一下菜单栏里的 OCR 图标，框一下，文字就进剪贴板。没有额外窗口，没有一堆配置，没有“请把图片拖到这里”，也没有成功以后再弹个提示来打断我。
 
 这点很重要。因为很多工具的问题不在“不能用”，而在“每次用都要被它打扰一下”。
 
 所以我一开始就把要求卡得比较死：
 
 - 快捷键触发
+- 菜单栏图标触发
 - 支持框选截图
 - 尽量只用 macOS 自带能力
 - 不装额外 OCR 软件
-- 最好只有一个 Lua 主入口文件
+- 主要逻辑收在一个 Lua 脚本里
 - 成功时别弹窗，失败再说
 
 你看，真正难的不是“OCR 能不能做”，而是把链路收得够短。
@@ -45,6 +47,8 @@ date: 2026-04-09T22:35:00+08:00
 所以目标很快就变成了：
 
 `Hammerspoon 负责交互 + macOS Vision 负责识别`
+
+后来我又补了一个菜单栏入口。快捷键适合手已经在键盘上的时候用，菜单栏图标适合鼠标正在屏幕上移动的时候用。两条入口最后都走同一个 `captureSelectionAndRecognize()`，这样不会有两套 OCR 逻辑互相分叉。
 
 这条路的好处是干净。系统本来就有的能力，能用就别再往外搬。
 
@@ -92,7 +96,15 @@ date: 2026-04-09T22:35:00+08:00
 
 如果 OCR 完了还得再点一次复制，那这个工具就已经输了。快捷动作之所以有价值，就是因为它能少一次手。
 
-### 4. 识别语言别乱开
+### 4. 菜单栏入口也要走同一条逻辑
+
+后来我觉得只靠快捷键还不够。有时候手在鼠标上，点菜单栏比按组合键自然；有时候快捷键也可能和别的软件习惯冲突。所以我又加了一个菜单栏 icon。
+
+这里我不想再丢一个单独的图标文件进去。最后的做法是把一段 18x18 的 SVG 直接内联在 Lua 脚本里，再用 `hs.base64.encode()` 拼成 data URL，交给 `hs.image.imageFromURL()` 生成菜单栏图标。
+
+这个图标还是扫描框加 `OCR` 三个字母。线宽收细到了 `1.05`，`C` 的右侧也补了短横，不然它看起来太像一个半圆。
+
+### 5. 识别语言别乱开
 
 我最后只给了这几个识别语言：
 
@@ -118,11 +130,28 @@ local alert = hs.alert
 local pasteboard = hs.pasteboard
 local timer = hs.timer
 local screenRecordingState = hs.screenRecordingState
+local menubar = hs.menubar
+local image = hs.image
+local base64 = hs.base64
 
 local ocr = {}
 
 local screenshotCommand = "/usr/sbin/screencapture"
 local osascriptCommand = "/usr/bin/osascript"
+local menuBarIconSvg = [[
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+  <g fill="none" stroke="black" stroke-width="1.05" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+    <path d="M2.4 5.1V3.6C2.4 2.9 2.9 2.4 3.6 2.4H5.1"/>
+    <path d="M12.9 2.4H14.4C15.1 2.4 15.6 2.9 15.6 3.6V5.1"/>
+    <path d="M15.6 12.9V14.4C15.6 15.1 15.1 15.6 14.4 15.6H12.9"/>
+    <path d="M5.1 15.6H3.6C2.9 15.6 2.4 15.1 2.4 14.4V12.9"/>
+    <circle cx="5.1" cy="9" r="1.9"/>
+    <path d="M10.65 7H10.25C9.1 7 8.25 7.8 8.25 9C8.25 10.2 9.1 11 10.25 11H10.65"/>
+    <path d="M12.1 11V7H13.55C14.35 7 14.9 7.5 14.9 8.2C14.9 8.95 14.35 9.45 13.55 9.45H12.1"/>
+    <path d="M13.45 9.45L14.9 11"/>
+  </g>
+</svg>
+]]
 
 -- Cleanup stale temp files on load
 for f in io.popen('ls /tmp/ocr_* 2>/dev/null'):lines() do
@@ -256,6 +285,30 @@ else
   alert.show("Ctrl+" .. triggerKey .. " is reserved", 3)
 end
 
+local function createMenuBarItem()
+  local item = menubar.new(true, "ocr_menu_bar")
+  if not item then
+    alert.show("OCR menu bar item failed", 3)
+    return nil
+  end
+
+  local icon = image.imageFromURL("data:image/svg+xml;base64," .. base64.encode(menuBarIconSvg))
+  if icon then
+    item:setIcon(icon, true)
+  else
+    item:setTitle("OCR")
+  end
+
+  item:setTooltip("OCR selection")
+  item:setClickCallback(function()
+    ocr.captureSelectionAndRecognize()
+  end)
+
+  return item
+end
+
+ocr.menuBar = createMenuBarItem()
+
 return ocr
 ```
 
@@ -265,13 +318,13 @@ return ocr
 require("ocr")
 ```
 
-重载 Hammerspoon 之后，按 `Ctrl + A` 就能用。
+重载 Hammerspoon 之后，按 `Ctrl + D`，或者点菜单栏里的 OCR 图标，就能用。
 
 ## 这份脚本到底干了什么
 
 如果把上面一大段压成几句人话，其实就是：
 
-1. 按 `Ctrl + A`
+1. 按 `Ctrl + D`，或者点击菜单栏 OCR 图标
 2. 调 `screencapture -i -x` 让你框选
 3. 把截图存成临时 PNG
 4. 现场生成一段 AppleScript
@@ -293,8 +346,9 @@ require("ocr")
 
 - 我不要第三方 OCR 依赖
 - 我不要成功弹窗
-- 我希望它最后还是一个单文件入口
+- 我希望主要逻辑最后还是收在一个 Lua 脚本里
 - 哪条路虽然能跑，但结构太脏，我不要
+- 菜单栏图标要内联在 Lua 里，不额外扔文件
 
 这些判断以前也重要，只是以前你还得自己把所有实现细节一并扛下来。现在实现这部分，可以明显往 AI 那边分了。
 
